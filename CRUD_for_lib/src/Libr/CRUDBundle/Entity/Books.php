@@ -27,13 +27,7 @@ class Books
      * @ORM\Column(name="book_name", type="string", length=45, nullable=false)
      */
     private $bookName;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="book_author", type="integer", nullable=false)
-     */
-    private $bookAuthor;
+    
 
     /**
      * @var string
