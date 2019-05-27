@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Book</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Bookid</th>
+                <td>{{ book.bookId }}</td>
+            </tr>
+            <tr>
+                <th>Bookname</th>
+                <td>{{ book.bookName }}</td>
+            </tr>
+            <tr>
+                <th>Bookdesc</th>
+                <td>{{ book.bookDesc }}</td>
+            </tr>
+            <tr>
+                <th>Bookimg</th>
+                <td>{{ book.bookImg }}</td>
+            </tr>
+            <tr>
+                <th>Bookpubdate</th>
+                <td>{% if book.bookPubDate %}{{ book.bookPubDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('books_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}
