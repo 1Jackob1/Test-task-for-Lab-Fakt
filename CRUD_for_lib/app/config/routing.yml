@@ -1,3 +1,8 @@
+libr_crud:
+    resource: "@LibrCRUDBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
