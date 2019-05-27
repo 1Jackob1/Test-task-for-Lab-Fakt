@@ -27,7 +27,7 @@ class Books
      * @ORM\Column(name="book_name", type="string", length=45, nullable=false)
      */
     private $bookName;
-    
+
 
     /**
      * @var string
@@ -39,7 +39,7 @@ class Books
     /**
      * @var string
      *
-     * @ORM\Column(name="book_img", type="blob", length=65535, nullable=false)
+     * @ORM\Column(name="book_img", type="blob", length=65535, nullable=true)
      */
     private $bookImg;
 
