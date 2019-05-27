@@ -50,5 +50,96 @@ class Authors
         $this->book = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-}
 
+    /**
+     * Get authorId
+     *
+     * @return integer
+     */
+    public function getAuthorId()
+    {
+        return $this->authorId;
+    }
+
+    /**
+     * Set authorName
+     *
+     * @param string $authorName
+     *
+     * @return Authors
+     */
+    public function setAuthorName($authorName)
+    {
+        $this->authorName = $authorName;
+
+        return $this;
+    }
+
+    /**
+     * Get authorName
+     *
+     * @return string
+     */
+    public function getAuthorName()
+    {
+        return $this->authorName;
+    }
+
+    /**
+     * Set authorSecondName
+     *
+     * @param string $authorSecondName
+     *
+     * @return Authors
+     */
+    public function setAuthorSecondName($authorSecondName)
+    {
+        $this->authorSecondName = $authorSecondName;
+
+        return $this;
+    }
+
+    /**
+     * Get authorSecondName
+     *
+     * @return string
+     */
+    public function getAuthorSecondName()
+    {
+        return $this->authorSecondName;
+    }
+
+    /**
+     * Add book
+     *
+     * @param \Libr\CRUDBundle\Entity\Books $book
+     *
+     * @return Authors
+     */
+    public function addBook(\Libr\CRUDBundle\Entity\Books $book)
+    {
+        $this->book[] = $book;
+
+        return $this;
+    }
+
+    /**
+     * Remove book
+     *
+     * @param \Libr\CRUDBundle\Entity\Books $book
+     */
+    public function removeBook(\Libr\CRUDBundle\Entity\Books $book)
+    {
+        $this->book->removeElement($book);
+    }
+
+    /**
+     * Get book
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBook()
+    {
+        return $this->book;
+    }
+}

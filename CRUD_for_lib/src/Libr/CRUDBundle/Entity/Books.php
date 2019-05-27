@@ -79,5 +79,168 @@ class Books
         $this->author = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-}
 
+    /**
+     * Get bookId
+     *
+     * @return integer
+     */
+    public function getBookId()
+    {
+        return $this->bookId;
+    }
+
+    /**
+     * Set bookName
+     *
+     * @param string $bookName
+     *
+     * @return Books
+     */
+    public function setBookName($bookName)
+    {
+        $this->bookName = $bookName;
+
+        return $this;
+    }
+
+    /**
+     * Get bookName
+     *
+     * @return string
+     */
+    public function getBookName()
+    {
+        return $this->bookName;
+    }
+
+    /**
+     * Set bookAuthor
+     *
+     * @param integer $bookAuthor
+     *
+     * @return Books
+     */
+    public function setBookAuthor($bookAuthor)
+    {
+        $this->bookAuthor = $bookAuthor;
+
+        return $this;
+    }
+
+    /**
+     * Get bookAuthor
+     *
+     * @return integer
+     */
+    public function getBookAuthor()
+    {
+        return $this->bookAuthor;
+    }
+
+    /**
+     * Set bookDesc
+     *
+     * @param string $bookDesc
+     *
+     * @return Books
+     */
+    public function setBookDesc($bookDesc)
+    {
+        $this->bookDesc = $bookDesc;
+
+        return $this;
+    }
+
+    /**
+     * Get bookDesc
+     *
+     * @return string
+     */
+    public function getBookDesc()
+    {
+        return $this->bookDesc;
+    }
+
+    /**
+     * Set bookImg
+     *
+     * @param string $bookImg
+     *
+     * @return Books
+     */
+    public function setBookImg($bookImg)
+    {
+        $this->bookImg = $bookImg;
+
+        return $this;
+    }
+
+    /**
+     * Get bookImg
+     *
+     * @return string
+     */
+    public function getBookImg()
+    {
+        return $this->bookImg;
+    }
+
+    /**
+     * Set bookPubDate
+     *
+     * @param \DateTime $bookPubDate
+     *
+     * @return Books
+     */
+    public function setBookPubDate($bookPubDate)
+    {
+        $this->bookPubDate = $bookPubDate;
+
+        return $this;
+    }
+
+    /**
+     * Get bookPubDate
+     *
+     * @return \DateTime
+     */
+    public function getBookPubDate()
+    {
+        return $this->bookPubDate;
+    }
+
+    /**
+     * Add author
+     *
+     * @param \Libr\CRUDBundle\Entity\Authors $author
+     *
+     * @return Books
+     */
+    public function addAuthor(\Libr\CRUDBundle\Entity\Authors $author)
+    {
+        $this->author[] = $author;
+
+        return $this;
+    }
+
+    /**
+     * Remove author
+     *
+     * @param \Libr\CRUDBundle\Entity\Authors $author
+     */
+    public function removeAuthor(\Libr\CRUDBundle\Entity\Authors $author)
+    {
+        $this->author->removeElement($author);
+    }
+
+    /**
+     * Get author
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+}
