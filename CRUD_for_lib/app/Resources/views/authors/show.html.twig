@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Author</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Authorid</th>
+                <td>{{ author.authorId }}</td>
+            </tr>
+            <tr>
+                <th>Authorname</th>
+                <td>{{ author.authorName }}</td>
+            </tr>
+            <tr>
+                <th>Authorsecondname</th>
+                <td>{{ author.authorSecondName }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('authors_index') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}
