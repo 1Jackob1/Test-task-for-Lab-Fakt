@@ -24,10 +24,9 @@
                 <td>{% if book.bookPubDate %}{{ book.bookPubDate|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>
                     <ul>
-                        <li>
-                            <a href="{{ path('books_show', { 'bookId': book.bookId }) }}">show</a>
-                        </li>
-                        {% for author in book.author %} <li>{{ author.getAuthorName }}</li> {% endfor %}
+                        {% for author in book.author %}
+                            <li>{{ author.getAuthorName }}</li>
+                        {% endfor %}
                     </ul>
                 </td>
             </tr>
