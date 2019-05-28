@@ -54,7 +54,7 @@ class Books
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Authors", inversedBy="book")
-     * @ORM\JoinTable(name="booksauthors",
+     * @ORM\JoinTable(name="BooksAuthors",
      *   joinColumns={
      *     @ORM\JoinColumn(name="book_id", referencedColumnName="book_id")
      *   },
