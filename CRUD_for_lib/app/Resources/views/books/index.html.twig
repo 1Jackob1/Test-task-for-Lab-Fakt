@@ -1,4 +1,16 @@
 {% extends 'base_bootstrap.html.twig' %}
+{% block JSHead %}
+    <script>
+        function changeAuthor(authorId, bookId) {
+            const el = document.getElementById(authorId.toString() + bookId.toString()).value;
+            const Http = new XMLHttpRequest();
+            const url='http://127.0.0.1:8000/authors/changeName/' + authorId + '/' + el;
+            Http.open("GET", url);
+            Http.send();
+        }
+
+    </script>
+{% endblock %}
 
 {% block body %}
     <h1>Books list</h1>
@@ -25,7 +37,8 @@
                 <td>
                     <ul>
                         {% for author in book.author %}
-                            <li>{{ author.getAuthorName }}</li>
+                            <li><input type="text" value="{{ author.getAuthorName }}" id="{{ author.getAuthorId }}{{ book.getBookId }}"
+                                       onfocusout="changeAuthor({{ author.getAuthorId }}, {{ book.getBookId }})"> </li>
                         {% endfor %}
                     </ul>
                 </td>

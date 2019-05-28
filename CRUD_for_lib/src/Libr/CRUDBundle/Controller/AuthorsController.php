@@ -6,6 +6,7 @@ use Libr\CRUDBundle\Entity\Authors;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Author controller.
@@ -43,5 +44,18 @@ class AuthorsController extends Controller
         return $this->render('authors/show.html.twig', array(
             'author' => $author,
         ));
+    }
+
+    /**
+     * @Route("/changeName/{authorId}/{authorName}")
+     */
+    public function changeNameAction($authorId, $authorName){
+        echo "im here";
+        $em = $this->getDoctrine()->getManager();
+        $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
+        $author->setAuthorName($authorName);
+        $em->persist($author);
+        $em->flush();
+        return $this->redirectToRoute('books_index');
     }
 }
