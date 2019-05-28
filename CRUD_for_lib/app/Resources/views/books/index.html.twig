@@ -1,23 +1,23 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_bootstrap.html.twig' %}
 
 {% block body %}
     <h1>Books list</h1>
 
-    <table>
+    <table class="table table-dark">
         <thead>
             <tr>
-                <th>Bookid</th>
-                <th>Bookname</th>
-                <th>Bookdesc</th>
-                <th>Bookimg</th>
-                <th>Bookpubdate</th>
-                <th>Actions</th>
+                <th scope = "col">Book_id</th>
+                <th scope = "col">Book_name</th>
+                <th scope = "col">Book_desc</th>
+                <th scope = "col">Book_img</th>
+                <th scope = "col">Book_pub_date</th>
+                <th scope = "col">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for book in books %}
             <tr>
-                <td><a href="{{ path('books_show', { 'bookId': book.bookId }) }}">{{ book.bookId }}</a></td>
+                <th scope = "row"><a href="{{ path('books_show', { 'bookId': book.bookId }) }}">{{ book.bookId }}</a></th>
                 <td>{{ book.bookName }}</td>
                 <td>{{ book.bookDesc }}</td>
                 <td>{{ book.bookImg }}</td>
@@ -27,6 +27,7 @@
                         <li>
                             <a href="{{ path('books_show', { 'bookId': book.bookId }) }}">show</a>
                         </li>
+                        {% for author in book.author %} <li>{{ author.getAuthorName }}</li> {% endfor %}
                     </ul>
                 </td>
             </tr>

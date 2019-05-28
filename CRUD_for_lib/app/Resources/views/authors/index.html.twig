@@ -1,21 +1,21 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_bootstrap.html.twig' %}
 
 {% block body %}
     <h1>Authors list</h1>
 
-    <table>
+    <table class = "table table-dark">
         <thead>
             <tr>
-                <th>Authorid</th>
-                <th>Authorname</th>
-                <th>Authorsecondname</th>
-                <th>Actions</th>
+                <th scope = "col">Author_id</th>
+                <th scope = "col">Author_name</th>
+                <th scope = "col">Author_second_name</th>
+                <th scope = "col">Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for author in authors %}
             <tr>
-                <td><a href="{{ path('authors_show', { 'authorId': author.authorId }) }}">{{ author.authorId }}</a></td>
+                <th scope = "row"><a href="{{ path('authors_show', { 'authorId': author.authorId }) }}">{{ author.authorId }}</a></th>
                 <td>{{ author.authorName }}</td>
                 <td>{{ author.authorSecondName }}</td>
                 <td>
