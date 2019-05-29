@@ -2,10 +2,12 @@
 
 namespace Libr\CRUDBundle\Controller;
 
+use Libr\CRUDBundle\Entity\Authors;
 use Libr\CRUDBundle\Entity\Books;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Form;
 
 /**
  * Book controller.
@@ -44,4 +46,23 @@ class BooksController extends Controller
             'book' => $book,
         ));
     }
+
+    /**
+     * @Route("/addAuthor/{bookId}/{authorName}/{authorSecondName}", name="add_Book_Author")
+     */
+    public function addAuthorAction($bookId, $authorName, $authorSecondName){
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
+        $author = new Authors();
+        $author->setAuthorName($authorName);
+        $author->setAuthorSecondName($authorSecondName);
+        $em->persist($author);
+        $book->addAuthor($author);
+        $em->flush();
+        return $this->redirectToRoute('books_index');
+
+    }
+
+
+
 }

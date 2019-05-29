@@ -9,6 +9,14 @@
             Http.send();
         }
 
+        function addAuthor(bookId) {
+            const newName = prompt("Enter Author Name:");
+            const newSecondNAme = prompt("Enter Author Second Name:");
+            const Http = new XMLHttpRequest();
+            const url='http://127.0.0.1:8000/books/addAuthor/' + bookId + '/' + newName + '/' + newSecondNAme;
+            Http.open("GET", url);
+            Http.send();
+        }
     </script>
 {% endblock %}
 
@@ -41,6 +49,7 @@
                                        onfocusout="changeAuthor({{ author.getAuthorId }}, {{ book.getBookId }})"> </li>
                         {% endfor %}
                     </ul>
+                    <input type="button" value="Add Co-Author" onclick="addAuthor({{ book.getBookId }})">
                 </td>
             </tr>
         {% endfor %}
