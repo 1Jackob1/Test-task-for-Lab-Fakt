@@ -28,7 +28,6 @@ class Books
      */
     private $bookName;
 
-
     /**
      * @var string
      *
@@ -39,14 +38,14 @@ class Books
     /**
      * @var string
      *
-     * @ORM\Column(name="book_img", type="blob", length=65535, nullable=true)
+     * @ORM\Column(name="book_img", type="string", length=255, nullable=true)
      */
     private $bookImg;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="book_pub_date", type="datetime", nullable=false)
+     * @ORM\Column(name="book_pub_date", type="date", nullable=false)
      */
     private $bookPubDate;
 
@@ -106,30 +105,6 @@ class Books
     public function getBookName()
     {
         return $this->bookName;
-    }
-
-    /**
-     * Set bookAuthor
-     *
-     * @param integer $bookAuthor
-     *
-     * @return Books
-     */
-    public function setBookAuthor($bookAuthor)
-    {
-        $this->bookAuthor = $bookAuthor;
-
-        return $this;
-    }
-
-    /**
-     * Get bookAuthor
-     *
-     * @return integer
-     */
-    public function getBookAuthor()
-    {
-        return $this->bookAuthor;
     }
 
     /**
