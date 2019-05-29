@@ -2,9 +2,10 @@
 {% block JSHead %}
     <script>
         function changeAuthor(authorId, bookId) {
-            const el = document.getElementById(authorId.toString() + bookId.toString()).value;
+            const newAuthorName = document.getElementById(authorId.toString() + bookId.toString() + '_name').value;
+            const newAuthor2Name = document.getElementById(authorId.toString() + bookId.toString() + '_2name').value;
             const Http = new XMLHttpRequest();
-            const url='http://127.0.0.1:8000/authors/changeName/' + authorId + '/' + el;
+            const url='http://127.0.0.1:8000/authors/changeName/' + authorId + '/' + newAuthorName + '/' + newAuthor2Name;
             Http.open("GET", url);
             Http.send();
         }
@@ -45,8 +46,11 @@
                 <td>
                     <ul>
                         {% for author in book.author %}
-                            <li><input type="text" value="{{ author.getAuthorName }}" id="{{ author.getAuthorId }}{{ book.getBookId }}"
-                                       onfocusout="changeAuthor({{ author.getAuthorId }}, {{ book.getBookId }})"> </li>
+                            <li>
+                                <input type="text" value="{{ author.getAuthorName }}" id="{{ author.getAuthorId }}{{ book.getBookId }}_name">
+                                <input type="text" value="{{ author.getAuthorSecondName }}" id="{{ author.getAuthorId }}{{ book.getBookId }}_2name">
+                                <button  onclick="changeAuthor({{ author.getAuthorId }}, {{ book.getBookId }})">Change Author</button>
+                            </li>
                         {% endfor %}
                     </ul>
                     <input type="button" value="Add Co-Author" onclick="addAuthor({{ book.getBookId }})">
