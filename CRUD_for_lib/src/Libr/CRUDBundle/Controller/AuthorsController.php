@@ -47,15 +47,16 @@ class AuthorsController extends Controller
     }
 
     /**
-     * @Route("/changeName/{authorId}/{authorName}")
+     * @Route("/changeName/{authorId}/{authorName}/{authorSecondName}")
      */
-    public function changeNameAction($authorId, $authorName){
-        echo "im here";
+    public function changeNameAction($authorId, $authorName, $authorSecondName){
         $em = $this->getDoctrine()->getManager();
         $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
         $author->setAuthorName($authorName);
+        $author->setAuthorSecondName($authorSecondName);
         $em->persist($author);
         $em->flush();
         return $this->redirectToRoute('books_index');
     }
+
 }
