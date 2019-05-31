@@ -152,5 +152,17 @@ class BooksController extends Controller
         return $this->redirectToRoute('books_index');
     }
 
+    /**
+     * @Route("/setNewImg/{bookId}", name="set_new_img")
+     */
+    public function setNewImg($bookId){
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
+        $book->setBookImg('/uploaded_imgs/'.md5(time()).basename($_FILES['new_book_img']['name']));
+        move_uploaded_file($_FILES['new_book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web'.$book->getBookImg());
+        $em->flush();
+        return $this->redirectToRoute('books_index');
+    }
+
 
 }

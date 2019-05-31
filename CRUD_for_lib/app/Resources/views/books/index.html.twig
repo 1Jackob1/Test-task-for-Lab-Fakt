@@ -7,7 +7,7 @@
         function sendRequest(method, path, params = null) {
             const Http = new XMLHttpRequest();
             Http.open(method, path);
-            if(method === "POST"){
+            if (method === "POST") {
                 Http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 Http.send(params);
                 return;
@@ -49,7 +49,7 @@
             bookDesc = bookDesc.innerText;
             let bookDescText = document.getElementById("bookDescTextModal");
             bookDescText.innerText = bookDesc;
-            if(!isSaving)
+            if (!isSaving)
                 return;
             console.log(document.getElementById("bookDescTextModal").value);
             sendRequest("POST", base_server_url + "books/editBookDesc/" + savedBookId, "desc=" + document.getElementById("bookDescTextModal").value)
@@ -97,13 +97,32 @@
                         </div>
                         <div class="row">
                             <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
-                                    data-target="#exampleModalLong" onclick="savedBookId = {{ book.bookId }}; editBookDesc(false);">
+                                    data-target="#exampleModalLong"
+                                    onclick="savedBookId = {{ book.bookId }}; editBookDesc(false);">
                                 Edit book description
                             </button>
                         </div>
                     </div>
                 </td>
-                <td><img src="{{ book.bookImg }}" alt="No image" width="150px" height="150px"></td>
+                <td>
+                    <div class="container">
+                        <div class="row p-1 col-12">
+                            <img src="{{ book.bookImg }}" alt="No image" width="150px" height="150px">
+                        </div>
+                        <div class="row p-1 col-12">
+                            <form method="POST" enctype="multipart/form-data"
+                                  action="{{ path('set_new_img', {'bookId': book.bookId}) }}">
+                                <div class="custom-file mb-3">
+                                    <input type="hidden" name="MAX_FILE_SIZE" value="150000">
+                                    <input type="file" class="custom-file-input" name="new_book_img" required>
+                                    <label class="custom-file-label" for="validatedCustomFile">Choose new img</label>
+                                </div>
+                                <input type="submit">
+                            </form>
+                        </div>
+                    </div>
+
+                </td>
                 <td>{% if book.bookPubDate %}{{ book.bookPubDate|date('Y-m-d') }}{% endif %}</td>
                 <td>
                     <ul>
@@ -133,7 +152,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <
+
     <div class=" w-100 row px-3">
         <form class="row col-12 col-xl-6" enctype="multipart/form-data" action="{{ path('form_process') }}"
               method="post">
@@ -163,7 +182,8 @@
                     </button>
                 </div>
                 <div class="modal-body" id="modalBookDesc">
-                    <div class="row justify-content-center"><textarea class="col-11" id="bookDescTextModal"></textarea></div>
+                    <div class="row justify-content-center"><textarea class="col-11" id="bookDescTextModal"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
