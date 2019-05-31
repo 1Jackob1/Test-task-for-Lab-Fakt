@@ -19,7 +19,7 @@
         function addAuthor(bookId) {
             const newName = prompt("Enter Author Name:");
             const newSecondNAme = prompt("Enter Author Second Name:");
-            if (newName == null || newSecondNAme == null)
+            if (newName == null || newSecondNAme == null || newName == "" || newSecondNAme == "")
                 return;
             sendRequest(base_server_url + 'books/addAuthor/' + bookId + '/' + newName + '/' + newSecondNAme);
         }
