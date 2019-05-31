@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
@@ -133,6 +134,20 @@ class BooksController extends Controller
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setBookName($newBookTitle);
+        $em->flush();
+        return $this->redirectToRoute('books_index');
+    }
+
+    /**
+     * @Route("/editBookDesc/{bookId}", name="edit_book_desc")
+     * @Method("POST")
+     */
+    public function editBookDesc($bookId){
+        $request = Request::createFromGlobals();
+        $text = $request->request->get('desc');
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
+        $book->setBookDesc($text);
         $em->flush();
         return $this->redirectToRoute('books_index');
     }

@@ -4,16 +4,21 @@
         let savedBookId;
         let base_server_url = 'http://127.0.0.1:8000/';
 
-        function sendRequest(path) {
+        function sendRequest(method, path, params = null) {
             const Http = new XMLHttpRequest();
-            Http.open("GET", path);
+            Http.open(method, path);
+            if(method === "POST"){
+                Http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                Http.send(params);
+                return;
+            }
             Http.send();
         }
 
         function changeAuthor(authorId, bookId) {
             const newAuthorName = document.getElementById(authorId.toString() + bookId.toString() + '_name').value;
             const newAuthor2Name = document.getElementById(authorId.toString() + bookId.toString() + '_2name').value;
-            sendRequest(base_server_url + 'authors/changeName/' + authorId + '/' + newAuthorName + '/' + newAuthor2Name);
+            sendRequest("GET", base_server_url + 'authors/changeName/' + authorId + '/' + newAuthorName + '/' + newAuthor2Name);
         }
 
         function addAuthor(bookId) {
@@ -21,22 +26,34 @@
             const newSecondNAme = prompt("Enter Author Second Name:");
             if (newName == null || newSecondNAme == null || newName == "" || newSecondNAme == "")
                 return;
-            sendRequest(base_server_url + 'books/addAuthor/' + bookId + '/' + newName + '/' + newSecondNAme);
+            sendRequest("GET", base_server_url + 'books/addAuthor/' + bookId + '/' + newName + '/' + newSecondNAme);
         }
 
         function attachExistingAuthor(authorId) {
-            sendRequest(base_server_url + 'books/attachExistingAuthor/' + authorId + '/' + savedBookId);
+            sendRequest("GET", base_server_url + 'books/attachExistingAuthor/' + authorId + '/' + savedBookId);
         }
 
         function unfastenExistingAuthor(authorId) {
-            sendRequest(base_server_url + 'books/unfastenExistingAuthor/' + authorId + '/' + savedBookId);
+            sendRequest("GET", base_server_url + 'books/unfastenExistingAuthor/' + authorId + '/' + savedBookId);
         }
 
         function editBookTitle(bookId, defaultTitle) {
             const newBookTitle = prompt('Enter new title', defaultTitle);
             if (newBookTitle == null || newBookTitle == '')
                 return;
-            sendRequest(base_server_url + 'books/editBookTitle/' + bookId + '/' + newBookTitle);
+            sendRequest("GET", base_server_url + 'books/editBookTitle/' + bookId + '/' + newBookTitle);
+        }
+
+        function editBookDesc(isSaving) {
+            let bookDesc = document.getElementById("book_" + savedBookId);
+            bookDesc = bookDesc.innerText;
+            let bookDescText = document.getElementById("bookDescTextModal");
+            bookDescText.innerText = bookDesc;
+            if(!isSaving)
+                return;
+            console.log(document.getElementById("bookDescTextModal").value);
+            sendRequest("POST", base_server_url + "books/editBookDesc/" + savedBookId, "desc=" + document.getElementById("bookDescTextModal").value)
+
         }
 
 
@@ -73,7 +90,19 @@
                         </div>
                     </div>
                 </td>
-                <td>{{ book.bookDesc }}</td>
+                <td>
+                    <div class="container">
+                        <div class="row">
+                            <p id="book_{{ book.bookId }}">{{ book.bookDesc }}</p>
+                        </div>
+                        <div class="row">
+                            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                                    data-target="#exampleModalLong" onclick="savedBookId = {{ book.bookId }}; editBookDesc(false);">
+                                Edit book description
+                            </button>
+                        </div>
+                    </div>
+                </td>
                 <td><img src="{{ book.bookImg }}" alt="No image" width="150px" height="150px"></td>
                 <td>{% if book.bookPubDate %}{{ book.bookPubDate|date('Y-m-d') }}{% endif %}</td>
                 <td>
@@ -123,6 +152,26 @@
 
     </div>
 
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+         aria-hidden="true" onchange="alert()">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBookDesc">
+                    <div class="row justify-content-center"><textarea class="col-11" id="bookDescTextModal"></textarea></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="editBookDesc(true)">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 
