@@ -164,5 +164,16 @@ class BooksController extends Controller
         return $this->redirectToRoute('books_index');
     }
 
+    /**
+     * @Route("/changePubDate/{bookId}", name="change_book_pub_date")
+     * @Method("POST")
+     */
+    public function changeBookPubDate($bookId){
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
+        $book->setBookPubDate(new \DateTime($_POST['new_book_date']));
+        $em->flush();
+        return $this->redirectToRoute('books_index');
+    }
 
 }
