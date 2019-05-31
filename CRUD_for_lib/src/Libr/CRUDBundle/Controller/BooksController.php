@@ -126,6 +126,16 @@ class BooksController extends Controller
 
     }
 
+    /**
+     * @Route("/editBookTitle/{bookId}/{newBookTitle}", name="edit_book_title")
+     */
+    public function editBookTitle($bookId, $newBookTitle){
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
+        $book->setBookName($newBookTitle);
+        $em->flush();
+        return $this->redirectToRoute('books_index');
+    }
 
 
 }

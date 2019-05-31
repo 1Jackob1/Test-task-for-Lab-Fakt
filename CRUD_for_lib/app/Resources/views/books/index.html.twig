@@ -32,6 +32,13 @@
             sendRequest(base_server_url + 'books/unfastenExistingAuthor/' + authorId + '/' + savedBookId);
         }
 
+        function editBookTitle(bookId, defaultTitle) {
+            const newBookTitle = prompt('Enter new title', defaultTitle);
+            if (newBookTitle == null || newBookTitle == '')
+                return;
+            sendRequest(base_server_url + 'books/editBookTitle/' + bookId + '/' + newBookTitle);
+        }
+
 
     </script>
 {% endblock %}
@@ -55,7 +62,17 @@
         {% for book in books %}
             <tr>
                 <th scope="row">{{ book.bookId }}</th>
-                <td>{{ book.bookName }}</td>
+                <td>
+                    <div class="container">
+                        <div class="row">{{ book.bookName }}</div>
+                        <div class="row">
+                            <button type="button" class="btn btn-sm btn-primary"
+                                    onclick="editBookTitle({{ book.bookId }}, '{{ book.bookName }}')">
+                                Edit book title
+                            </button>
+                        </div>
+                    </div>
+                </td>
                 <td>{{ book.bookDesc }}</td>
                 <td><img src="{{ book.bookImg }}" alt="No image" width="150px" height="150px"></td>
                 <td>{% if book.bookPubDate %}{{ book.bookPubDate|date('Y-m-d') }}{% endif %}</td>
@@ -78,7 +95,8 @@
                     <button type="button" class="btn btn-primary" onclick="addAuthor({{ book.bookId }})">
                         Add new Co-Author
                     </button>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" onclick="savedBookId={{ book.bookId }}">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter"
+                            onclick="savedBookId={{ book.bookId }}">
                         Attach/Unfasten existing Author
                     </button>
                 </td>
@@ -86,7 +104,8 @@
         {% endfor %}
         </tbody>
     </table>
-   < <div class=" w-100 row px-3">
+    <
+    <div class=" w-100 row px-3">
         <form class="row col-12 col-xl-6" enctype="multipart/form-data" action="{{ path('form_process') }}"
               method="post">
             <div class="col-6 col-lg-4 mb-3">Enter book title: <input type="text" name="book_title"></div>
@@ -109,15 +128,19 @@
 
 {% block modalBody %}
     {% for author in authors %}
-            <div class="row mb-1">
+        <div class="row mb-1">
 
-                <div class="col-6">{{ author.getAuthorName }} {{ author.getAuthorSecondName }} </div>
+            <div class="col-6">{{ author.getAuthorName }} {{ author.getAuthorSecondName }} </div>
 
-                <div class="col-6">
-                    <button type="button" class="btn btn-success btn-sm" onclick="attachExistingAuthor({{ author.authorId }})">Add author</button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="unfastenExistingAuthor({{ author.authorId }})">Delete author</button>
-                </div>
-
+            <div class="col-6">
+                <button type="button" class="btn btn-success btn-sm"
+                        onclick="attachExistingAuthor({{ author.authorId }})">Add author
+                </button>
+                <button type="button" class="btn btn-danger btn-sm"
+                        onclick="unfastenExistingAuthor({{ author.authorId }})">Delete author
+                </button>
             </div>
+
+        </div>
     {% endfor %}
 {% endblock %}
