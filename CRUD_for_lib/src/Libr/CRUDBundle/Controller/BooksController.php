@@ -44,6 +44,53 @@ class BooksController extends Controller
     }
 
     /**
+     * @Route("/{sortBy}", defaults={"sortBy" = "none"}, name="sort_books_by")
+     * @Method("GET")
+     */
+    public function sortByAction($sortBy){
+        $em = $this->getDoctrine()->getManager();
+        $books = $em->getRepository('LibrCRUDBundle:Books')->findAll();
+        switch ($sortBy){
+            case "none":
+                break;
+            case "title":
+                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookName' => 'ASC'));
+                break;
+            case "img":
+                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookImg' => 'ASC'));
+                break;
+            case "rel_date":
+                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookPubDate' => 'ASC'));
+                break;
+            case "description":
+                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookDesc' => 'ASC'));
+                break;
+            case "title_d":
+                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookName' => 'DESC'));
+                break;
+            case "img_d":
+                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookImg' => 'DESC'));
+                break;
+            case "rel_date_d":
+                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookPubDate' => 'DESC'));
+                break;
+            case "description_d":
+                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookDesc' => 'DESC'));
+                break;
+            default:
+                break;
+
+
+        }
+
+        $authors = $em->getRepository('LibrCRUDBundle:Authors')->findAll();
+        return $this->render('books/index.html.twig', array(
+            'books' => $books,
+            'authors' => $authors
+        ));
+    }
+
+    /**
      * Finds and displays a book entity.
      *
      * @Route("/{bookId}", name="books_show")
@@ -88,7 +135,8 @@ class BooksController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->persist($book);
         $em->flush();
-        return new Response('');
+
+        return $this->redirectToRoute('books_index');
     }
 
     /**
