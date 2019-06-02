@@ -73,15 +73,18 @@
 
         <div class="container border border-primary">
             <div class="row">
-                <div class="col-6">
+                <div class="col-3">
                     <p>Sort by ASC:</p>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <p>Sort by DESC:</p>
+                </div>
+                <div class="col-3">
+                    <p>Queries:</p>
                 </div>
             </div>
             <div class="row">
-                <div class="col-6">
+                <div class="col-3">
                     <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'title'}) }}">Title</a>
                     <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'img'}) }}">Image</a>
                     <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'rel_date'}) }}">Realise
@@ -89,13 +92,17 @@
                     <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'description'}) }}">By
                         description</a>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                     <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'title_d'}) }}">Title</a>
                     <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'img_d'}) }}">Image</a>
                     <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'rel_date_d'}) }}">Realise
                         date</a>
                     <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'description_d'}) }}">By
                         description</a>
+                </div>
+                <div class="col-3">
+                    <a class="badge badge-primary" href="{{ path('native_query') }}">Native</a>
+                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'img_d'}) }}">Image</a>
                 </div>
             </div>
         </div>

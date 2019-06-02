@@ -2,12 +2,14 @@
 
 namespace Libr\CRUDBundle\Controller;
 
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Libr\CRUDBundle\Entity\Authors;
 use Libr\CRUDBundle\Entity\Books;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Book controller.
@@ -216,4 +218,35 @@ class BooksController extends Controller
         return $this->redirectToRoute('books_index', array() ,302);
     }
 
+    /**
+     * @Route("/query/native", name="native_query")
+     * @Method("GET")
+     */
+    public function nativeQueryAction(){
+        $em = $this->getDoctrine()->getManager();
+        $sql = "select Books.book_id as id from BooksAuthors 
+                inner join Books on Books.book_id = BooksAuthors.book_id 
+                group by (Books.book_id)
+                having count(*) > 1";
+        $rsm = $em->getConnection()->prepare($sql);
+        $rsm->execute();
+        $queryResult = $rsm->fetchAll();
+        $booksRep = $em->getRepository('LibrCRUDBundle:Books');
+        $books = array();
+        foreach ($queryResult as $el)
+            $books[] = $booksRep->find($el['id']);
+        return $this->render(':books:index.html.twig', array(
+            'books' => $books,
+            'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
+        ));
+
+    }
+
+    /**
+     * @Route("/query/doctrine", name="doctrine_query")
+     * @Method("GET")
+     */
+    public function doctineQueryAction(){
+        
+    }
 }
