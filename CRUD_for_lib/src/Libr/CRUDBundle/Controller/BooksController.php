@@ -2,21 +2,12 @@
 
 namespace Libr\CRUDBundle\Controller;
 
-use Doctrine\DBAL\Types\TextType;
 use Libr\CRUDBundle\Entity\Authors;
 use Libr\CRUDBundle\Entity\Books;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Book controller.

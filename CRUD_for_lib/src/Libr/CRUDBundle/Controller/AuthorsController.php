@@ -3,10 +3,9 @@
 namespace Libr\CRUDBundle\Controller;
 
 use Libr\CRUDBundle\Entity\Authors;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * Author controller.
