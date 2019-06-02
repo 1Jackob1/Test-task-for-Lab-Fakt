@@ -7,12 +7,18 @@
         function sendRequest(method, path, params = null) {
             const Http = new XMLHttpRequest();
             Http.open(method, path);
+
             if (method === "POST") {
                 Http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 Http.send(params);
+                if(Http.status == 0)
+                    document.location.reload();
                 return;
             }
             Http.send();
+            console.log(Http.status);
+            if(Http.status == 0)
+                document.location.reload();
         }
 
         function changeAuthor(authorId, bookId) {
@@ -41,7 +47,7 @@
             const newBookTitle = prompt('Enter new title', defaultTitle);
             if (newBookTitle == null || newBookTitle == '')
                 return;
-            sendRequest("GET", base_server_url + 'books/editBookTitle/' + bookId + '/' + newBookTitle);
+            sendRequest("POST", base_server_url + 'books/editBookTitle/' + bookId + '/' + newBookTitle);
         }
 
         function editBookDesc(isSaving) {
@@ -217,7 +223,7 @@
     </div>
 
     <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
-         aria-hidden="true" onchange="alert()">
+         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

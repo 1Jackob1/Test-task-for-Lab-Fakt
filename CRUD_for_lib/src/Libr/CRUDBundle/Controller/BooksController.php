@@ -35,11 +35,9 @@ class BooksController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $books = $em->getRepository('LibrCRUDBundle:Books')->findAll();
-        $authors = $em->getRepository('LibrCRUDBundle:Authors')->findAll();
         return $this->render('books/index.html.twig', array(
-            'books' => $books,
-            'authors' => $authors
+            'books' => $em->getRepository('LibrCRUDBundle:Books')->findAll(),
+            'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
         ));
     }
 
@@ -116,7 +114,7 @@ class BooksController extends Controller
         $em->persist($author);
         $book->addAuthor($author);
         $em->flush();
-        return $this->redirectToRoute('books_index');
+        return $this->redirectToRoute('books_index', array() ,302);
 
     }
 
@@ -136,7 +134,7 @@ class BooksController extends Controller
         $em->persist($book);
         $em->flush();
 
-        return $this->redirectToRoute('books_index');
+        return $this->redirectToRoute('books_index', array() ,302);
     }
 
     /**
@@ -153,7 +151,7 @@ class BooksController extends Controller
                 return $this->redirectToRoute('books_index');
         $book->addAuthor($author);
         $em->flush();
-        return $this->redirectToRoute('books_index');
+        return $this->redirectToRoute('books_index', array() ,302);
     }
 
     /**
@@ -171,8 +169,7 @@ class BooksController extends Controller
         if($author_exists)
            $book->removeAuthor($author);
         $em->flush();
-        return $this->redirectToRoute('books_index');
-
+        return $this->redirectToRoute('books_index', array() ,302);
     }
 
     /**
@@ -183,7 +180,7 @@ class BooksController extends Controller
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setBookName($newBookTitle);
         $em->flush();
-        return $this->redirectToRoute('books_index');
+        return $this->redirectToRoute('books_index', array() ,302);
     }
 
     /**
@@ -197,7 +194,7 @@ class BooksController extends Controller
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setBookDesc($text);
         $em->flush();
-        return $this->redirectToRoute('books_index');
+        return $this->redirectToRoute('books_index', array() ,302);
     }
 
     /**
@@ -209,7 +206,7 @@ class BooksController extends Controller
         $book->setBookImg('/uploaded_imgs/'.md5(time()).basename($_FILES['new_book_img']['name']));
         move_uploaded_file($_FILES['new_book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web'.$book->getBookImg());
         $em->flush();
-        return $this->redirectToRoute('books_index');
+        return $this->redirectToRoute('books_index', array() ,302);
     }
 
     /**
@@ -221,7 +218,11 @@ class BooksController extends Controller
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setBookPubDate(new \DateTime($_POST['new_book_date']));
         $em->flush();
-        return $this->redirectToRoute('books_index');
+        /*return $this->render('books/index.html.twig', array(
+            'books' => $em->getRepository('LibrCRUDBundle:Books')->findAll(),
+            'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
+        ));*/
+        return $this->redirectToRoute('books_index', array() ,302);
     }
 
 }
