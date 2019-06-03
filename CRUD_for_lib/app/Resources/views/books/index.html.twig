@@ -10,15 +10,17 @@
 
             if (method === "POST") {
                 Http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                if (Http.status == 0)
+                    document.location.reload(true);
                 Http.send(params);
-                if(Http.status == 0)
-                    document.location.reload();
                 return;
             }
-            Http.send();
+
             console.log(Http.status);
-            if(Http.status == 0)
-                document.location.reload();
+            if (Http.status == 0)
+                document.location.reload(true);
+            Http.send();
         }
 
         function changeAuthor(authorId, bookId) {
@@ -102,7 +104,7 @@
                 </div>
                 <div class="col-3">
                     <a class="badge badge-primary" href="{{ path('native_query') }}">Native</a>
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'img_d'}) }}">Image</a>
+                    <a class="badge badge-primary" href="{{ path('doctrine_query') }}">By Doctrine</a>
                 </div>
             </div>
         </div>

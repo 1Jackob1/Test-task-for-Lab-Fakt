@@ -38,10 +38,11 @@ class BooksController extends Controller
      * @Route("/{sortBy}", defaults={"sortBy" = "none"}, name="sort_books_by")
      * @Method("GET")
      */
-    public function sortByAction($sortBy){
+    public function sortByAction($sortBy)
+    {
         $em = $this->getDoctrine()->getManager();
         $books = $em->getRepository('LibrCRUDBundle:Books')->findAll();
-        switch ($sortBy){
+        switch ($sortBy) {
             case "none":
                 break;
             case "title":
@@ -98,7 +99,8 @@ class BooksController extends Controller
     /**
      * @Route("/addAuthor/{bookId}/{authorName}/{authorSecondName}", name="add_Book_Author")
      */
-    public function addAuthorAction($bookId, $authorName, $authorSecondName){
+    public function addAuthorAction($bookId, $authorName, $authorSecondName)
+    {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $author = new Authors();
@@ -107,7 +109,7 @@ class BooksController extends Controller
         $em->persist($author);
         $book->addAuthor($author);
         $em->flush();
-        return $this->redirectToRoute('books_index', array() ,302);
+        return $this->redirectToRoute('books_index', array(), 302);
 
     }
 
@@ -115,26 +117,28 @@ class BooksController extends Controller
      * @Route("/form", name="form_process")
      * @Method("POST")
      */
-    public function formProcess(){
+    public function formProcess()
+    {
         $book = new Books();
         $book->setBookDesc($_POST['book_desc']);
-        $book->setBookImg('/uploaded_imgs/'.md5(time()).basename($_FILES['book_img']['name']));
+        $book->setBookImg('/uploaded_imgs/' . md5(time()) . basename($_FILES['book_img']['name']));
         $book->setBookName($_POST['book_title']);
 
         $book->setBookPubDate(new \DateTime($_POST['book_date']));
-        move_uploaded_file($_FILES['book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web'.$book->getBookImg());
+        move_uploaded_file($_FILES['book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getBookImg());
         $em = $this->getDoctrine()->getManager();
         $em->persist($book);
         $em->flush();
 
-        return $this->redirectToRoute('books_index', array() ,302);
+        return $this->redirectToRoute('books_index', array(), 302);
     }
 
     /**
      * @Route("/attachExistingAuthor/{authorId}/{bookId}", name="attach_author")
      * @Method("GET")
      */
-    public function attachExistingAuthor($authorId, $bookId){
+    public function attachExistingAuthor($authorId, $bookId)
+    {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
@@ -144,14 +148,15 @@ class BooksController extends Controller
                 return $this->redirectToRoute('books_index');
         $book->addAuthor($author);
         $em->flush();
-        return $this->redirectToRoute('books_index', array() ,302);
+        return $this->redirectToRoute('books_index', array(), 302);
     }
 
     /**
      * @Route("/unfastenExistingAuthor/{authorId}/{bookId}", name="unfasten_author")
      * @Method("GET")
      */
-    public function unfastenExistingAuthor($authorId, $bookId){
+    public function unfastenExistingAuthor($authorId, $bookId)
+    {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
@@ -159,54 +164,58 @@ class BooksController extends Controller
         foreach ($book->getAuthor() as $_author)
             if ($author == $_author)
                 $author_exists = true;
-        if($author_exists)
-           $book->removeAuthor($author);
+        if ($author_exists)
+            $book->removeAuthor($author);
         $em->flush();
-        return $this->redirectToRoute('books_index', array() ,302);
+        return $this->redirectToRoute('books_index', array(), 302);
     }
 
     /**
      * @Route("/editBookTitle/{bookId}/{newBookTitle}", name="edit_book_title")
      */
-    public function editBookTitle($bookId, $newBookTitle){
+    public function editBookTitle($bookId, $newBookTitle)
+    {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setBookName($newBookTitle);
         $em->flush();
-        return $this->redirectToRoute('books_index', array() ,302);
+        return $this->redirectToRoute('books_index', array(), 302);
     }
 
     /**
      * @Route("/editBookDesc/{bookId}", name="edit_book_desc")
      * @Method("POST")
      */
-    public function editBookDesc($bookId){
+    public function editBookDesc($bookId)
+    {
         $request = Request::createFromGlobals();
         $text = $request->request->get('desc');
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setBookDesc($text);
         $em->flush();
-        return $this->redirectToRoute('books_index', array() ,302);
+        return $this->redirectToRoute('books_index', array(), 302);
     }
 
     /**
      * @Route("/setNewImg/{bookId}", name="set_new_img")
      */
-    public function setNewImg($bookId){
+    public function setNewImg($bookId)
+    {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $book->setBookImg('/uploaded_imgs/'.md5(time()).basename($_FILES['new_book_img']['name']));
-        move_uploaded_file($_FILES['new_book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web'.$book->getBookImg());
+        $book->setBookImg('/uploaded_imgs/' . md5(time()) . basename($_FILES['new_book_img']['name']));
+        move_uploaded_file($_FILES['new_book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getBookImg());
         $em->flush();
-        return $this->redirectToRoute('books_index', array() ,302);
+        return $this->redirectToRoute('books_index', array(), 302);
     }
 
     /**
      * @Route("/changePubDate/{bookId}", name="change_book_pub_date")
      * @Method("POST")
      */
-    public function changeBookPubDate($bookId){
+    public function changeBookPubDate($bookId)
+    {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setBookPubDate(new \DateTime($_POST['new_book_date']));
@@ -215,14 +224,15 @@ class BooksController extends Controller
             'books' => $em->getRepository('LibrCRUDBundle:Books')->findAll(),
             'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
         ));*/
-        return $this->redirectToRoute('books_index', array() ,302);
+        return $this->redirectToRoute('books_index', array(), 302);
     }
 
     /**
      * @Route("/query/native", name="native_query")
      * @Method("GET")
      */
-    public function nativeQueryAction(){
+    public function nativeQueryAction()
+    {
         $em = $this->getDoctrine()->getManager();
         $sql = "select Books.book_id as id from BooksAuthors 
                 inner join Books on Books.book_id = BooksAuthors.book_id 
@@ -246,7 +256,25 @@ class BooksController extends Controller
      * @Route("/query/doctrine", name="doctrine_query")
      * @Method("GET")
      */
-    public function doctineQueryAction(){
-        
+    public function doctineQueryAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $qb = $this->getDoctrine()->getEntityManager()->createQueryBuilder();
+        $qb->select('b.bookId')
+            ->from('LibrCRUDBundle:Booksauthors', 'BA')
+            ->innerJoin('LibrCRUDBundle:Books', 'b', 'WITH', 'b.bookId = BA.book')
+            ->groupBy('b.bookId')
+            ->having($qb->expr()->count('b.bookId') . '>1');
+        $queryResult = $qb->getQuery()->getResult();
+        //dump($queryResult);
+        //return new Response('');
+        $booksRep = $em->getRepository('LibrCRUDBundle:Books');
+        $books = array();
+        foreach ($queryResult as $el)
+            $books[] = $booksRep->find($el['bookId']);
+        return $this->render(':books:index.html.twig', array(
+            'books' => $books,
+            'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
+        ));
     }
 }
