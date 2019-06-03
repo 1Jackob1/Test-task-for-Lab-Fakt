@@ -18,6 +18,8 @@
         "php": ">=5.3.9",
         "doctrine/doctrine-bundle": "~1.4",
         "doctrine/orm": "^2.4.8",
+        "fakerino/symfony-fakerino": "~0.1",
+        "fzaninotto/faker": "^1.8",
         "incenteev/composer-parameter-handler": "~2.0",
         "sensio/distribution-bundle": "~4.0",
         "sensio/framework-extra-bundle": "^3.0.2",
@@ -40,9 +42,11 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
         ],
         "post-install-cmd": [
+            "vendor/fakerino/fakerino/build/ods vendor/fakerino/fakerino/data",
             "@symfony-scripts"
         ],
         "post-update-cmd": [
+            "vendor/fakerino/fakerino/build/ods vendor/fakerino/fakerino/data",
             "@symfony-scripts"
         ]
     },
