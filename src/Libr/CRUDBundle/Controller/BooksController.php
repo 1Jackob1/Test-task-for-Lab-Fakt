@@ -228,10 +228,10 @@ class BooksController extends Controller
     public function nativeQueryAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $sql = "select Books.book_id as id from BooksAuthors 
-                inner join Books on Books.book_id = BooksAuthors.book_id 
-                group by (Books.book_id)
-                having count(*) > 1";
+        $sql = "SELECT books.id AS id FROM books_authors 
+                INNER JOIN books ON books.id = books_authors.book_id 
+                GROUP BY (books.id)
+                HAVING COUNT(*) > 1";
         $rsm = $em->getConnection()->prepare($sql);
         $rsm->execute();
         $queryResult = $rsm->fetchAll();
