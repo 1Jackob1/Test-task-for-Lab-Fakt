@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Authors
  *
- * @ORM\Table(name="Authors")
+ * @ORM\Table(name="authors")
  * @ORM\Entity
  */
 class Authors
@@ -15,25 +15,25 @@ class Authors
     /**
      * @var integer
      *
-     * @ORM\Column(name="author_id", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $authorId;
+    private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="author_name", type="string", length=45, nullable=false)
+     * @ORM\Column(name="first_name", type="string", length=45, nullable=false)
      */
-    private $authorName;
+    private $firstName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="author_second_name", type="string", length=45, nullable=false)
+     * @ORM\Column(name="second_name", type="string", length=45, nullable=false)
      */
-    private $authorSecondName;
+    private $secondName;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -52,61 +52,61 @@ class Authors
 
 
     /**
-     * Get authorId
+     * Get id
      *
      * @return integer
      */
-    public function getAuthorId()
+    public function getId()
     {
-        return $this->authorId;
+        return $this->id;
     }
 
     /**
-     * Set authorName
+     * Set firstName
      *
-     * @param string $authorName
+     * @param string $firstName
      *
      * @return Authors
      */
-    public function setAuthorName($authorName)
+    public function setFirstName($firstName)
     {
-        $this->authorName = $authorName;
+        $this->firstName = $firstName;
 
         return $this;
     }
 
     /**
-     * Get authorName
+     * Get firstName
      *
      * @return string
      */
-    public function getAuthorName()
+    public function getFirstName()
     {
-        return $this->authorName;
+        return $this->firstName;
     }
 
     /**
-     * Set authorSecondName
+     * Set secondName
      *
-     * @param string $authorSecondName
+     * @param string $secondName
      *
      * @return Authors
      */
-    public function setAuthorSecondName($authorSecondName)
+    public function setSecondName($secondName)
     {
-        $this->authorSecondName = $authorSecondName;
+        $this->secondName = $secondName;
 
         return $this;
     }
 
     /**
-     * Get authorSecondName
+     * Get secondName
      *
      * @return string
      */
-    public function getAuthorSecondName()
+    public function getSecondName()
     {
-        return $this->authorSecondName;
+        return $this->secondName;
     }
 
     /**
