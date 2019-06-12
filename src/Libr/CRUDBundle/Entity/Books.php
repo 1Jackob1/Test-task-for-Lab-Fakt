@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Books
  *
- * @ORM\Table(name="Books")
+ * @ORM\Table(name="books")
  * @ORM\Entity
  */
 class Books
@@ -15,50 +15,50 @@ class Books
     /**
      * @var integer
      *
-     * @ORM\Column(name="book_id", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $bookId;
+    private $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="book_name", type="string", length=45, nullable=false)
+     * @ORM\Column(name="title", type="string", length=45, nullable=false)
      */
-    private $bookName;
+    private $title;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="book_desc", type="text", length=16777215, nullable=false)
+     * @ORM\Column(name="description", type="text", length=16777215, nullable=false)
      */
-    private $bookDesc;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="book_img", type="string", length=255, nullable=true)
-     */
-    private $bookImg;
+    private $description;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="book_pub_date", type="date", nullable=false)
+     * @ORM\Column(name="publication_date", type="date", nullable=false)
      */
-    private $bookPubDate;
+    private $publicationDate;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="img_path", type="text", length=65535, nullable=false)
+     */
+    private $imgPath;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Authors", inversedBy="book")
-     * @ORM\JoinTable(name="BooksAuthors",
+     * @ORM\JoinTable(name="books_authors",
      *   joinColumns={
-     *     @ORM\JoinColumn(name="book_id", referencedColumnName="book_id")
+     *     @ORM\JoinColumn(name="book_id", referencedColumnName="id")
      *   },
      *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="author_id", referencedColumnName="author_id")
+     *     @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      *   }
      * )
      */
@@ -74,109 +74,109 @@ class Books
 
 
     /**
-     * Get bookId
+     * Get id
      *
      * @return integer
      */
-    public function getBookId()
+    public function getId()
     {
-        return $this->bookId;
+        return $this->id;
     }
 
     /**
-     * Set bookName
+     * Set title
      *
-     * @param string $bookName
+     * @param string $title
      *
      * @return Books
      */
-    public function setBookName($bookName)
+    public function setTitle($title)
     {
-        $this->bookName = $bookName;
+        $this->title = $title;
 
         return $this;
     }
 
     /**
-     * Get bookName
+     * Get title
      *
      * @return string
      */
-    public function getBookName()
+    public function getTitle()
     {
-        return $this->bookName;
+        return $this->title;
     }
 
     /**
-     * Set bookDesc
+     * Set description
      *
-     * @param string $bookDesc
+     * @param string $description
      *
      * @return Books
      */
-    public function setBookDesc($bookDesc)
+    public function setDescription($description)
     {
-        $this->bookDesc = $bookDesc;
+        $this->description = $description;
 
         return $this;
     }
 
     /**
-     * Get bookDesc
+     * Get description
      *
      * @return string
      */
-    public function getBookDesc()
+    public function getDescription()
     {
-        return $this->bookDesc;
+        return $this->description;
     }
 
     /**
-     * Set bookImg
+     * Set publicationDate
      *
-     * @param string $bookImg
+     * @param \DateTime $publicationDate
      *
      * @return Books
      */
-    public function setBookImg($bookImg)
+    public function setPublicationDate($publicationDate)
     {
-        $this->bookImg = $bookImg;
+        $this->publicationDate = $publicationDate;
 
         return $this;
     }
 
     /**
-     * Get bookImg
-     *
-     * @return string
-     */
-    public function getBookImg()
-    {
-        return $this->bookImg;
-    }
-
-    /**
-     * Set bookPubDate
-     *
-     * @param \DateTime $bookPubDate
-     *
-     * @return Books
-     */
-    public function setBookPubDate($bookPubDate)
-    {
-        $this->bookPubDate = $bookPubDate;
-
-        return $this;
-    }
-
-    /**
-     * Get bookPubDate
+     * Get publicationDate
      *
      * @return \DateTime
      */
-    public function getBookPubDate()
+    public function getPublicationDate()
     {
-        return $this->bookPubDate;
+        return $this->publicationDate;
+    }
+
+    /**
+     * Set imgPath
+     *
+     * @param string $imgPath
+     *
+     * @return Books
+     */
+    public function setImgPath($imgPath)
+    {
+        $this->imgPath = $imgPath;
+
+        return $this;
+    }
+
+    /**
+     * Get imgPath
+     *
+     * @return string
+     */
+    public function getImgPath()
+    {
+        return $this->imgPath;
     }
 
     /**
