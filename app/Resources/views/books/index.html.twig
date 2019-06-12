@@ -123,13 +123,13 @@
 
             {% for book in books %}
                 <tr>
-                    <th scope="row">{{ book.bookId }}</th>
+                    <th scope="row">{{book.id }}</th>
                     <td>
                         <div class="container justify-content-center">
-                            <div class="row">{{ book.bookName }}</div>
+                            <div class="row">{{ book.title }}</div>
                             <div class="row">
                                 <button type="button" class="btn btn-sm btn-primary"
-                                        onclick="editBookTitle({{ book.bookId }}, '{{ book.bookName }}')">
+                                        onclick="editBookTitle({{book.id }}, '{{ book.title }}')">
                                     Edit book title
                                 </button>
                             </div>
@@ -138,12 +138,12 @@
                     <td>
                         <div class="container justify-content-center">
                             <div class="row">
-                                <p id="book_{{ book.bookId }}">{{ book.bookDesc }}</p>
+                                <p id="book_{{book.id }}">{{ book.description }}</p>
                             </div>
                             <div class="row">
                                 <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
                                         data-target="#exampleModalLong"
-                                        onclick="savedBookId = {{ book.bookId }}; editBookDesc(false);">
+                                        onclick="savedBookId = {{book.id }}; editBookDesc(false);">
                                     Edit book description
                                 </button>
                             </div>
@@ -152,11 +152,11 @@
                     <td>
                         <div class="container ">
                             <div class="row p-1 col-12 justify-content-center">
-                                <img src="{{ book.bookImg }}" alt="No image" width="150px" height="150px">
+                                <img src="{{ book.imgPath }}" alt="No image" width="150px" height="150px">
                             </div>
                             <div class="row p-1 col-12">
                                 <form method="POST" enctype="multipart/form-data"
-                                      action="{{ path('set_new_img', {'bookId': book.bookId}) }}">
+                                      action="{{ path('set_new_img', {'bookId':book.id}) }}">
                                     <div class="custom-file mb-3">
                                         <input type="hidden" name="MAX_FILE_SIZE" value="150000">
                                         <input type="file" class="custom-file-input" name="new_book_img" required>
@@ -172,10 +172,10 @@
                     <td>
                         <div class="container">
                             <div class="row">
-                                {% if book.bookPubDate %}{{ book.bookPubDate|date('Y-m-d') }}{% endif %}
+                                {% if book.publicationDate %}{{ book.publicationDate|date('Y-m-d') }}{% endif %}
                             </div>
                             <form method="post"
-                                  action="{{ path('change_book_pub_date', {'bookId': book.bookId}) }}">
+                                  action="{{ path('change_book_pub_date', {'bookId':book.id}) }}">
                                 <div class="row">Enter date :</div>
                                 <div class="row"><input type="date" name="new_book_date"></div>
                                 <div class="row"><input type="submit" value="Set new date"></div>
@@ -186,24 +186,24 @@
                         <ul>
                             {% for author in book.author %}
                                 <li>
-                                    <input type="text" value="{{ author.getAuthorName }}"
-                                           id="{{ author.getAuthorId }}{{ book.getBookId }}_name">
-                                    <input type="text" value="{{ author.getAuthorSecondName }}"
-                                           id="{{ author.getAuthorId }}{{ book.getBookId }}_2name">
+                                    <input type="text" value="{{ author.firstName }}"
+                                           id="{{ author.id }}{{ book.id }}_name">
+                                    <input type="text" value="{{ author.secondName }}"
+                                           id="{{ author.id }}{{ book.id }}_2name">
                                     <button type="button" class="btn btn-sm btn-warning"
-                                            onclick="changeAuthor({{ author.getAuthorId }}, {{ book.getBookId }})">
+                                            onclick="changeAuthor({{ author.id }}, {{ book.id }})">
                                         Change Author
                                     </button>
 
                                 </li>
                             {% endfor %}
                         </ul>
-                        <button type="button" class="btn btn-primary" onclick="addAuthor({{ book.bookId }})">
+                        <button type="button" class="btn btn-primary" onclick="addAuthor({{book.id }})">
                             Add new Co-Author
                         </button>
                         <button type="button" class="btn btn-primary" data-toggle="modal"
                                 data-target="#attachUnfastenModal"
-                                onclick="savedBookId={{ book.bookId }}">
+                                onclick="savedBookId={{book.id }}">
                             Attach/Unfasten existing Author
                         </button>
                     </td>
@@ -259,14 +259,14 @@
     {% for author in authors %}
         <div class="row mb-1">
 
-            <div class="col-6">{{ author.getAuthorName }} {{ author.getAuthorSecondName }} </div>
+            <div class="col-6">{{ author.firstName }} {{ author.secondName }} </div>
 
             <div class="col-6">
                 <button type="button" class="btn btn-success btn-sm"
-                        onclick="attachExistingAuthor({{ author.authorId }})">Add author
+                        onclick="attachExistingAuthor({{ author.id }})">Add author
                 </button>
                 <button type="button" class="btn btn-danger btn-sm"
-                        onclick="unfastenExistingAuthor({{ author.authorId }})">Delete author
+                        onclick="unfastenExistingAuthor({{ author.id }})">Delete author
                 </button>
             </div>
 

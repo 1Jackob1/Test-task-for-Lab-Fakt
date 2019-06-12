@@ -23,7 +23,6 @@ class AuthorsController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
         $authors = $em->getRepository('LibrCRUDBundle:Authors')->findAll();
 
         return $this->render('authors/index.html.twig', array(
@@ -51,10 +50,11 @@ class AuthorsController extends Controller
     public function changeNameAction($authorId, $authorName, $authorSecondName){
         $em = $this->getDoctrine()->getManager();
         $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
-        $author->setAuthorName($authorName);
-        $author->setAuthorSecondName($authorSecondName);
+        $author->setFirstName($authorName);
+        $author->setSecondName($authorSecondName);
         $em->persist($author);
         $em->flush();
+
         return $this->redirectToRoute('books_index');
     }
 

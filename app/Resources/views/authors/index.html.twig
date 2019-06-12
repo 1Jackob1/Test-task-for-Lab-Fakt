@@ -15,14 +15,14 @@
         <tbody>
         {% for author in authors %}
             <tr>
-                <th scope="row">{{ author.authorId }}</th>
-                <td>{{ author.authorName }}</td>
-                <td>{{ author.authorSecondName }}</td>
+                <th scope="row">{{ author.id }}</th>
+                <td>{{ author.firstName }}</td>
+                <td>{{ author.secondName }}</td>
                 <td>
                     <ul>
 
                         {% for book in author.book %}
-                            <li>{{ book.getBookName }}</li>
+                            <li>{{ book.getTitle }}</li>
                         {% endfor %}
 
                     </ul>

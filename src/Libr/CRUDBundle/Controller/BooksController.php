@@ -42,6 +42,7 @@ class BooksController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $books = $em->getRepository('LibrCRUDBundle:Books')->findAll();
+
         switch ($sortBy) {
             case "none":
                 break;
@@ -90,7 +91,6 @@ class BooksController extends Controller
      */
     public function showAction(Books $book)
     {
-
         return $this->render('books/show.html.twig', array(
             'book' => $book,
         ));
@@ -104,8 +104,8 @@ class BooksController extends Controller
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $author = new Authors();
-        $author->setAuthorName($authorName);
-        $author->setAuthorSecondName($authorSecondName);
+        $author->setFirstName($authorName);
+        $author->setSecondName($authorSecondName);
         $em->persist($author);
         $book->addAuthor($author);
         $em->flush();
@@ -120,12 +120,11 @@ class BooksController extends Controller
     public function formProcess()
     {
         $book = new Books();
-        $book->setBookDesc($_POST['book_desc']);
-        $book->setBookImg('/uploaded_imgs/' . md5(time()) . basename($_FILES['book_img']['name']));
-        $book->setBookName($_POST['book_title']);
-
-        $book->setBookPubDate(new \DateTime($_POST['book_date']));
-        move_uploaded_file($_FILES['book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getBookImg());
+        $book->setDescription($_POST['book_desc']);
+        $book->setImgPath('/uploaded_imgs/' . md5(time()) . basename($_FILES['book_img']['name']));
+        $book->setTitle($_POST['book_title']);
+        $book->setPublicationDate(new \DateTime($_POST['book_date']));
+        move_uploaded_file($_FILES['book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getImgPath());
         $em = $this->getDoctrine()->getManager();
         $em->persist($book);
         $em->flush();
@@ -142,7 +141,6 @@ class BooksController extends Controller
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
-        //if(in_array($author, (array) $book->getAuthor()))
         foreach ($book->getAuthor() as $_author)
             if ($author == $_author)
                 return $this->redirectToRoute('books_index');
@@ -177,7 +175,7 @@ class BooksController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $book->setBookName($newBookTitle);
+        $book->setTitle($newBookTitle);
         $em->flush();
         return $this->redirectToRoute('books_index', array(), 302);
     }
@@ -192,7 +190,7 @@ class BooksController extends Controller
         $text = $request->request->get('desc');
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $book->setBookDesc($text);
+        $book->setDescription($text);
         $em->flush();
         return $this->redirectToRoute('books_index', array(), 302);
     }
@@ -204,8 +202,8 @@ class BooksController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $book->setBookImg('/uploaded_imgs/' . md5(time()) . basename($_FILES['new_book_img']['name']));
-        move_uploaded_file($_FILES['new_book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getBookImg());
+        $book->setImgPath('/uploaded_imgs/' . md5(time()) . basename($_FILES['new_book_img']['name']));
+        move_uploaded_file($_FILES['new_book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getImgPath());
         $em->flush();
         return $this->redirectToRoute('books_index', array(), 302);
     }
@@ -218,12 +216,8 @@ class BooksController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $book->setBookPubDate(new \DateTime($_POST['new_book_date']));
+        $book->setPublicationDate(new \DateTime($_POST['new_book_date']));
         $em->flush();
-        /*return $this->render('books/index.html.twig', array(
-            'books' => $em->getRepository('LibrCRUDBundle:Books')->findAll(),
-            'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
-        ));*/
         return $this->redirectToRoute('books_index', array(), 302);
     }
 
@@ -266,8 +260,6 @@ class BooksController extends Controller
             ->groupBy('b.bookId')
             ->having($qb->expr()->count('b.bookId') . '>1');
         $queryResult = $qb->getQuery()->getResult();
-        //dump($queryResult);
-        //return new Response('');
         $booksRep = $em->getRepository('LibrCRUDBundle:Books');
         $books = array();
         foreach ($queryResult as $el)
