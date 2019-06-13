@@ -35,47 +35,13 @@ class BooksController extends Controller
     }
 
     /**
-     * @Route("/{sortBy}", defaults={"sortBy" = "none"}, name="sort_books_by")
+     * @Route("/sort", name="sort_books_by")
      * @Method("GET")
      */
-    public function sortByAction($sortBy)
+    public function sortAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $books = $em->getRepository('LibrCRUDBundle:Books')->findAll();
-
-        switch ($sortBy) {
-            case "none":
-                break;
-            case "title":
-                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookName' => 'ASC'));
-                break;
-            case "img":
-                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookImg' => 'ASC'));
-                break;
-            case "rel_date":
-                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookPubDate' => 'ASC'));
-                break;
-            case "description":
-                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookDesc' => 'ASC'));
-                break;
-            case "title_d":
-                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookName' => 'DESC'));
-                break;
-            case "img_d":
-                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookImg' => 'DESC'));
-                break;
-            case "rel_date_d":
-                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookPubDate' => 'DESC'));
-                break;
-            case "description_d":
-                $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array('bookDesc' => 'DESC'));
-                break;
-            default:
-                break;
-
-
-        }
-
+        $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array($request->query->get('field') => $request->query->get('order')));
         $authors = $em->getRepository('LibrCRUDBundle:Authors')->findAll();
         return $this->render('books/index.html.twig', array(
             'books' => $books,
@@ -83,29 +49,32 @@ class BooksController extends Controller
         ));
     }
 
-    /**
-     * Finds and displays a book entity.
-     *
-     * @Route("/{bookId}", name="books_show")
-     * @Method("GET")
-     */
-    public function showAction(Books $book)
-    {
-        return $this->render('books/show.html.twig', array(
-            'book' => $book,
-        ));
-    }
+//    /**
+//     * Finds and displays a book entity.
+//     *
+//     * @Route("/{bookId}", name="books_show")
+//     * @Method("GET")
+//     */
+//    public function showAction(Books $book)
+//    {
+//        return $this->render('books/show.html.twig', array(
+//            'book' => $book,
+//        ));
+//    }
 
     /**
-     * @Route("/addAuthor/{bookId}/{authorName}/{authorSecondName}", name="add_Book_Author")
+     * @Route("/addAuthor", name="add_Book_Author")
+     * @Method("POST")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function addAuthorAction($bookId, $authorName, $authorSecondName)
+    public function addAuthorAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($request->request->get('bookId'));
         $author = new Authors();
-        $author->setFirstName($authorName);
-        $author->setSecondName($authorSecondName);
+        $author->setFirstName($request->request->get('authorFirstName'));
+        $author->setSecondName($request->request->get('authorSecondName'));
         $em->persist($author);
         $book->addAuthor($author);
         $em->flush();
@@ -133,65 +102,58 @@ class BooksController extends Controller
     }
 
     /**
-     * @Route("/attachExistingAuthor/{authorId}/{bookId}", name="attach_author")
-     * @Method("GET")
-     */
-    public function attachExistingAuthor($authorId, $bookId)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
-        foreach ($book->getAuthor() as $_author)
-            if ($author == $_author)
-                return $this->redirectToRoute('books_index');
-        $book->addAuthor($author);
-        $em->flush();
-        return $this->redirectToRoute('books_index', array(), 302);
-    }
-
-    /**
-     * @Route("/unfastenExistingAuthor/{authorId}/{bookId}", name="unfasten_author")
-     * @Method("GET")
-     */
-    public function unfastenExistingAuthor($authorId, $bookId)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
-        $author_exists = false;
-        foreach ($book->getAuthor() as $_author)
-            if ($author == $_author)
-                $author_exists = true;
-        if ($author_exists)
-            $book->removeAuthor($author);
-        $em->flush();
-        return $this->redirectToRoute('books_index', array(), 302);
-    }
-
-    /**
-     * @Route("/editBookTitle/{bookId}/{newBookTitle}", name="edit_book_title")
-     */
-    public function editBookTitle($bookId, $newBookTitle)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $book->setTitle($newBookTitle);
-        $em->flush();
-        return $this->redirectToRoute('books_index', array(), 302);
-    }
-
-    /**
-     * @Route("/editBookDesc/{bookId}", name="edit_book_desc")
+     * @Route("/registerAuthor/{authorId}/{bookId}", name="attach_author")
      * @Method("POST")
      */
-    public function editBookDesc($bookId)
+    public function registerAuthorAction(Request $request)
     {
-        $request = Request::createFromGlobals();
-        $text = $request->request->get('desc');
         $em = $this->getDoctrine()->getManager();
-        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $book->setDescription($text);
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($request->request->get('bookId'));
+        $author = $em->getRepository('LibrCRUDBundle:Authors')->find($request->request->get('authorId'));
+        $savedAuthor = null;
+        foreach ($book->getAuthor() as $authorBook) {
+            if ($author == $authorBook) {
+                $savedAuthor = $authorBook;
+                break;
+            }
+        }
+
+        if($request->request->get('isAttaching') == '1') {
+            if($savedAuthor == null){
+                $book->addAuthor($author);
+            }
+        }
+        else {
+            if($savedAuthor != null) {
+                $book->removeAuthor($savedAuthor);
+            }
+        }
         $em->flush();
+        return $this->redirectToRoute('books_index', array(), 302);
+    }
+
+
+    /**
+     * @Route("/editBookTitle", name="edit_book_title")
+     * @Method("POST")
+     */
+    public function editBookTitle(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($request->get('bookId'));
+        switch ($request->get('field')) {
+            case 'title':
+                $book->setTitle($request->get('newTitle'));
+                break;
+            case 'desc':
+                $book->setDescription($request->get('newDesc'));
+                break;
+            case 'date':
+                $book->setPublicationDate(new \DateTime($request->get('newDate')));
+                break;
+        }
+        $em->flush();
+
         return $this->redirectToRoute('books_index', array(), 302);
     }
 

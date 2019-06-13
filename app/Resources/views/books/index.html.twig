@@ -7,49 +7,45 @@
         function sendRequest(method, path, params = null) {
             const Http = new XMLHttpRequest();
             Http.open(method, path);
-
-            if (method === "POST") {
+            if(method === "POST") {
                 Http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-                if (Http.status == 0)
-                    document.location.reload(true);
+                // if (Http.status == 0)
+                // document.location.reload(true);
                 Http.send(params);
                 return;
             }
-
-            console.log(Http.status);
             if (Http.status == 0)
-                document.location.reload(true);
+                window.location.replace(path);
             Http.send();
         }
 
         function changeAuthor(authorId, bookId) {
             const newAuthorName = document.getElementById(authorId.toString() + bookId.toString() + '_name').value;
             const newAuthor2Name = document.getElementById(authorId.toString() + bookId.toString() + '_2name').value;
-            sendRequest("GET", base_server_url + 'authors/changeName/' + authorId + '/' + newAuthorName + '/' + newAuthor2Name);
+            let params = "authorId=" + authorId + "&authorFirstName=" + newAuthorName + "&authorSecondName=" + newAuthor2Name;
+            sendRequest("POST", base_server_url + 'authors/changeName', params);
         }
 
         function addAuthor(bookId) {
             const newName = prompt("Enter Author Name:");
             const newSecondNAme = prompt("Enter Author Second Name:");
-            if (newName == null || newSecondNAme == null || newName == "" || newSecondNAme == "")
+            if (newName == null || newSecondNAme == null || newName === "" || newSecondNAme === "")
                 return;
-            sendRequest("GET", base_server_url + 'books/addAuthor/' + bookId + '/' + newName + '/' + newSecondNAme);
+            let params = "bookId=" + bookId + "&authorFirstName=" + newName + "&authorSecondName=" + newSecondNAme;
+            sendRequest("POST", base_server_url + 'books/addAuthor', params);
         }
 
-        function attachExistingAuthor(authorId) {
-            sendRequest("GET", base_server_url + 'books/attachExistingAuthor/' + authorId + '/' + savedBookId);
-        }
-
-        function unfastenExistingAuthor(authorId) {
-            sendRequest("GET", base_server_url + 'books/unfastenExistingAuthor/' + authorId + '/' + savedBookId);
+        function attachOrUnfastenExistingAuthor(authorId, isAttaching) {
+            let params = "autorId=" + authorId + "&bookId=" + savedBookId + "&isAttaching = " + (isAttaching) ? 1 : 0;
+            sendRequest("POST", base_server_url + 'books/registerAuthor', params);
         }
 
         function editBookTitle(bookId, defaultTitle) {
             const newBookTitle = prompt('Enter new title', defaultTitle);
-            if (newBookTitle == null || newBookTitle == '')
+            if (newBookTitle == null || newBookTitle === '')
                 return;
-            sendRequest("POST", base_server_url + 'books/editBookTitle/' + bookId + '/' + newBookTitle);
+            let params = "bookId=" + bookId + "&newTitle=" + newBookTitle + "&field=title";
+            sendRequest("POST", base_server_url + 'books/editBookTitle', params);
         }
 
         function editBookDesc(isSaving) {
@@ -59,9 +55,22 @@
             bookDescText.innerText = bookDesc;
             if (!isSaving)
                 return;
-            console.log(document.getElementById("bookDescTextModal").value);
-            sendRequest("POST", base_server_url + "books/editBookDesc/" + savedBookId, "desc=" + document.getElementById("bookDescTextModal").value)
+            let params = "newDesc=" + document.getElementById("bookDescTextModal").value + "&bookId="+savedBookId + "&field=desc";
+            sendRequest("POST", base_server_url + "books/editBookTitle", params)
+        }
 
+        function sortBooks(field, order) {
+            let params = "field=" + field + "&order=" + order;
+            alert(params);
+            sendRequest("GET", base_server_url + "books/sort?" + params);
+        }
+
+        function editBookPubDate(bookId) {
+            let bookDate = document.getElementById("book_pub_date"+bookId).value;
+            if(bookDate === "")
+                return;
+            let params = "newDate=" + bookDate + "&bookId="+bookId + "&field=date";
+            sendRequest("POST", base_server_url + "books/editBookTitle", params)
         }
 
 
@@ -87,19 +96,19 @@
             </div>
             <div class="row">
                 <div class="col-3">
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'title'}) }}">Title</a>
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'img'}) }}">Image</a>
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'rel_date'}) }}">Realise
+                    <a class="badge badge-primary" onclick="sortBooks('title', 'ASC')">Title</a>
+                    <a class="badge badge-primary" onclick="sortBooks('imgPath', 'ASC')">Image</a>
+                    <a class="badge badge-primary" onclick="sortBooks('publicationDate', 'ASC')">Realise
                         date</a>
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'description'}) }}">By
+                    <a class="badge badge-primary" onclick="sortBooks('description', 'ASC')">By
                         description</a>
                 </div>
                 <div class="col-3">
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'title_d'}) }}">Title</a>
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'img_d'}) }}">Image</a>
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'rel_date_d'}) }}">Realise
+                    <a class="badge badge-primary" onclick="sortBooks('title', 'DESC')">Title</a>
+                    <a class="badge badge-primary" onclick="sortBooks('imgPath', 'DESC')">Image</a>
+                    <a class="badge badge-primary" onclick="sortBooks('publicationDate', 'DESC')">Realise
                         date</a>
-                    <a class="badge badge-primary" href="{{ path('sort_books_by', {'sortBy': 'description_d'}) }}">By
+                    <a class="badge badge-primary" onclick="sortBooks('description', 'DESC')">By
                         description</a>
                 </div>
                 <div class="col-3">
@@ -123,13 +132,13 @@
 
             {% for book in books %}
                 <tr>
-                    <th scope="row">{{book.id }}</th>
+                    <th scope="row">{{ book.id }}</th>
                     <td>
                         <div class="container justify-content-center">
                             <div class="row">{{ book.title }}</div>
                             <div class="row">
                                 <button type="button" class="btn btn-sm btn-primary"
-                                        onclick="editBookTitle({{book.id }}, '{{ book.title }}')">
+                                        onclick="editBookTitle({{ book.id }}, '{{ book.title }}')">
                                     Edit book title
                                 </button>
                             </div>
@@ -138,12 +147,12 @@
                     <td>
                         <div class="container justify-content-center">
                             <div class="row">
-                                <p id="book_{{book.id }}">{{ book.description }}</p>
+                                <p id="book_{{ book.id }}">{{ book.description }}</p>
                             </div>
                             <div class="row">
                                 <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
                                         data-target="#exampleModalLong"
-                                        onclick="savedBookId = {{book.id }}; editBookDesc(false);">
+                                        onclick="savedBookId = {{ book.id }}; editBookDesc(false);">
                                     Edit book description
                                 </button>
                             </div>
@@ -174,12 +183,9 @@
                             <div class="row">
                                 {% if book.publicationDate %}{{ book.publicationDate|date('Y-m-d') }}{% endif %}
                             </div>
-                            <form method="post"
-                                  action="{{ path('change_book_pub_date', {'bookId':book.id}) }}">
                                 <div class="row">Enter date :</div>
-                                <div class="row"><input type="date" name="new_book_date"></div>
-                                <div class="row"><input type="submit" value="Set new date"></div>
-                            </form>
+                                <div class="row"><input type="date" name="new_book_date" id="book_pub_date{{ book.id }}" ></div>
+                                <div class="row"><button class="btn btn-primary" onclick="editBookPubDate({{ book.id }})">Set new date</button> </div>
                         </div>
                     </td>
                     <td>
@@ -198,12 +204,12 @@
                                 </li>
                             {% endfor %}
                         </ul>
-                        <button type="button" class="btn btn-primary" onclick="addAuthor({{book.id }})">
+                        <button type="button" class="btn btn-primary" onclick="addAuthor({{ book.id }})">
                             Add new Co-Author
                         </button>
                         <button type="button" class="btn btn-primary" data-toggle="modal"
                                 data-target="#attachUnfastenModal"
-                                onclick="savedBookId={{book.id }}">
+                                onclick="savedBookId={{ book.id }}">
                             Attach/Unfasten existing Author
                         </button>
                     </td>
@@ -263,10 +269,10 @@
 
             <div class="col-6">
                 <button type="button" class="btn btn-success btn-sm"
-                        onclick="attachExistingAuthor({{ author.id }})">Add author
+                        onclick="attachOrUnfastenExistingAuthor({{ author.id }}, true)">Add author
                 </button>
                 <button type="button" class="btn btn-danger btn-sm"
-                        onclick="unfastenExistingAuthor({{ author.id }})">Delete author
+                        onclick="attachOrUnfastenExistingAuthor({{ author.id }}, false)">Delete author
                 </button>
             </div>
 
