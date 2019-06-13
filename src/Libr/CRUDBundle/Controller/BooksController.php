@@ -165,20 +165,12 @@ class BooksController extends Controller
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setImgPath('/uploaded_imgs/' . md5(time()) . basename($_FILES['new_book_img']['name']));
-        move_uploaded_file($_FILES['new_book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getImgPath());
-        $em->flush();
-        return $this->redirectToRoute('books_index', array(), 302);
-    }
-
-    /**
-     * @Route("/changePubDate/{bookId}", name="change_book_pub_date")
-     * @Method("POST")
-     */
-    public function changeBookPubDate($bookId)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
-        $book->setPublicationDate(new \DateTime($_POST['new_book_date']));
+        try {
+            $this->container->get('file_loader')->saveFile($_FILES['new_book_img']['tmp_name'],
+                $this->container->get('kernel')->getRootDir() . '/../web' . $book->getImgPath());
+        } catch (\Exception $e){
+            $this->container->get('logger')->addCritical('Can\'t load file!');
+        }
         $em->flush();
         return $this->redirectToRoute('books_index', array(), 302);
     }
