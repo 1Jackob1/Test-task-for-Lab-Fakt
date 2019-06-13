@@ -208,11 +208,11 @@ class BooksController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $qb = $this->getDoctrine()->getEntityManager()->createQueryBuilder();
-        $qb->select('b.bookId')
-            ->from('LibrCRUDBundle:Booksauthors', 'BA')
-            ->innerJoin('LibrCRUDBundle:Books', 'b', 'WITH', 'b.bookId = BA.book')
-            ->groupBy('b.bookId')
-            ->having($qb->expr()->count('b.bookId') . '>1');
+        $qb->select('b.id')
+            ->from('LibrCRUDBundle:Books', 'b')
+            ->join('b.author', 'author')
+            ->groupBy('b.id')
+            ->having($qb->expr()->count('b.id') . '>1');
         $queryResult = $qb->getQuery()->getResult();
         $booksRep = $em->getRepository('LibrCRUDBundle:Books');
         $books = array();
