@@ -106,14 +106,14 @@ class BooksController extends Controller
     }
 
     /**
-     * @Route("/registerAuthor/{authorId}/{bookId}", name="attach_author")
+     * @Route("/registerAuthor", name="attach_author")
      * @Method("POST")
      */
     public function registerAuthorAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $book = $em->getRepository('LibrCRUDBundle:Books')->find($request->request->get('bookId'));
-        $author = $em->getRepository('LibrCRUDBundle:Authors')->find($request->request->get('authorId'));
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($request->get('bookId'));
+        $author = $em->getRepository('LibrCRUDBundle:Authors')->find($request->get('authorId'));
         $savedAuthor = null;
         foreach ($book->getAuthor() as $authorBook) {
             if ($author == $authorBook) {
@@ -121,7 +121,6 @@ class BooksController extends Controller
                 break;
             }
         }
-
         if ($request->request->get('isAttaching') == '1') {
             if ($savedAuthor == null) {
                 $book->addAuthor($author);
@@ -177,8 +176,8 @@ class BooksController extends Controller
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($bookId);
         $book->setImgPath('/uploaded_imgs/' . md5(time()) . basename($_FILES['new_book_img']['name']));
         try {
-            $this->container->get('file_loader')->saveFile($_FILES['new_book_img']['tmp_name'],
-                $this->container->get('kernel')->getRootDir() . '/../web' . $book->getImgPath());
+            $this->get('file_loader')->saveFile($_FILES['new_book_img']['tmp_name'],
+                $this->get('kernel')->getRootDir() . '/../web' . $book->getImgPath());
             $em->flush();
         } catch (Exception $exception) {
             return $this->errorProcessAction($exception);
@@ -240,7 +239,8 @@ class BooksController extends Controller
      * @param Exception $exception
      * @return Response
      */
-    public function errorProcessAction(Exception $exception){
+    public function errorProcessAction(Exception $exception)
+    {
         $this->get('logger')->addError($exception->getMessage(), array($exception->getCode(), $exception->getFile(), $exception->getLine()));
         return new Response($exception->getMessage(), 406);
     }
