@@ -2,7 +2,8 @@
 
 namespace Libr\CRUDBundle\Controller;
 
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use DateTime;
+use Exception;
 use Libr\CRUDBundle\Entity\Authors;
 use Libr\CRUDBundle\Entity\Books;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -65,8 +66,6 @@ class BooksController extends Controller
     /**
      * @Route("/addAuthor", name="add_Book_Author")
      * @Method("POST")
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function addAuthorAction(Request $request)
     {
@@ -75,9 +74,14 @@ class BooksController extends Controller
         $author = new Authors();
         $author->setFirstName($request->request->get('authorFirstName'));
         $author->setSecondName($request->request->get('authorSecondName'));
-        $em->persist($author);
-        $book->addAuthor($author);
-        $em->flush();
+        try {
+            $em->persist($author);
+            $book->addAuthor($author);
+            $em->flush();
+        } catch (Exception $exception) {
+            return $this->errorProcessAction($exception);
+        }
+
         return $this->redirectToRoute('books_index', array(), 302);
 
     }
@@ -92,7 +96,7 @@ class BooksController extends Controller
         $book->setDescription($_POST['book_desc']);
         $book->setImgPath('/uploaded_imgs/' . md5(time()) . basename($_FILES['book_img']['name']));
         $book->setTitle($_POST['book_title']);
-        $book->setPublicationDate(new \DateTime($_POST['book_date']));
+        $book->setPublicationDate(new DateTime($_POST['book_date']));
         move_uploaded_file($_FILES['book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getImgPath());
         $em = $this->getDoctrine()->getManager();
         $em->persist($book);
@@ -118,17 +122,20 @@ class BooksController extends Controller
             }
         }
 
-        if($request->request->get('isAttaching') == '1') {
-            if($savedAuthor == null){
+        if ($request->request->get('isAttaching') == '1') {
+            if ($savedAuthor == null) {
                 $book->addAuthor($author);
             }
-        }
-        else {
-            if($savedAuthor != null) {
+        } else {
+            if ($savedAuthor != null) {
                 $book->removeAuthor($savedAuthor);
             }
         }
-        $em->flush();
+        try {
+            $em->flush();
+        } catch (Exception $exception) {
+            return $this->errorProcessAction($exception);
+        }
         return $this->redirectToRoute('books_index', array(), 302);
     }
 
@@ -149,10 +156,14 @@ class BooksController extends Controller
                 $book->setDescription($request->get('newDesc'));
                 break;
             case 'date':
-                $book->setPublicationDate(new \DateTime($request->get('newDate')));
+                $book->setPublicationDate(new DateTime($request->get('newDate')));
                 break;
         }
-        $em->flush();
+        try {
+            $em->flush();
+        } catch (Exception $exception) {
+            return $this->errorProcessAction($exception);
+        }
 
         return $this->redirectToRoute('books_index', array(), 302);
     }
@@ -168,10 +179,11 @@ class BooksController extends Controller
         try {
             $this->container->get('file_loader')->saveFile($_FILES['new_book_img']['tmp_name'],
                 $this->container->get('kernel')->getRootDir() . '/../web' . $book->getImgPath());
-        } catch (\Exception $e){
-            $this->container->get('logger')->addCritical('Can\'t load file!');
+            $em->flush();
+        } catch (Exception $exception) {
+            return $this->errorProcessAction($exception);
         }
-        $em->flush();
+
         return $this->redirectToRoute('books_index', array(), 302);
     }
 
@@ -222,5 +234,14 @@ class BooksController extends Controller
             'books' => $books,
             'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
         ));
+    }
+
+    /**
+     * @param Exception $exception
+     * @return Response
+     */
+    public function errorProcessAction(Exception $exception){
+        $this->get('logger')->addError($exception->getMessage(), array($exception->getCode(), $exception->getFile(), $exception->getLine()));
+        return new Response($exception->getMessage(), 406);
     }
 }
