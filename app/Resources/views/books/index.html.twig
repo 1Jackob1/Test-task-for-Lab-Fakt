@@ -5,18 +5,24 @@
         let base_server_url = 'http://127.0.0.1:8000/';
 
         function sendRequest(method, path, params = null) {
-            const Http = new XMLHttpRequest();
-            Http.open(method, path);
+            const request = new XMLHttpRequest();
+            request.open(method, path, false);
             if(method === "POST") {
-                Http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                // if (Http.status == 0)
-                // document.location.reload(true);
-                Http.send(params);
+                request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                request.send(params);
+                if(request.status !== 200) {
+                    alert("Error occurred! \n" + request.responseText);
+                } else {
+                    window.location.reload();
+                }
                 return;
             }
-            if (Http.status == 0)
-                window.location.replace(path);
-            Http.send();
+            if(request.status !== 200) {
+                alert(request.responseText);
+            } else {
+                window.location.reload();
+            }
+            request.send();
         }
 
         function changeAuthor(authorId, bookId) {
