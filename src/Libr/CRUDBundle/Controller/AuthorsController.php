@@ -6,6 +6,7 @@ use Libr\CRUDBundle\Entity\Authors;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Author controller.
@@ -45,13 +46,15 @@ class AuthorsController extends Controller
     }
 
     /**
-     * @Route("/changeName/{authorId}/{authorName}/{authorSecondName}")
+     * @Route("/changeName")
+     * @Method("POST")
      */
-    public function changeNameAction($authorId, $authorName, $authorSecondName){
+    public function changeNameAction(Request $request){
+
         $em = $this->getDoctrine()->getManager();
-        $author = $em->getRepository('LibrCRUDBundle:Authors')->find($authorId);
-        $author->setFirstName($authorName);
-        $author->setSecondName($authorSecondName);
+        $author = $em->getRepository('LibrCRUDBundle:Authors')->find($request->get('authorId'));
+        $author->setFirstName($request->get('authorFirstName'));
+        $author->setSecondName($request->get('authorSecondName'));
         $em->persist($author);
         $em->flush();
 
