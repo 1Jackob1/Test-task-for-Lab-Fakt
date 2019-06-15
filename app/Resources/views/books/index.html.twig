@@ -7,22 +7,18 @@
         function sendRequest(method, path, params = null) {
             const request = new XMLHttpRequest();
             request.open(method, path, false);
-            if(method === "POST") {
+            if (method === "POST") {
                 request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 request.send(params);
-                if(request.status !== 200) {
-                    alert("Error occurred! \n" + request.responseText);
-                } else {
-                    window.location.reload();
-                }
-                return;
-            }
-            if(request.status !== 200) {
-                alert(request.responseText);
             } else {
+                request.send();
+            }
+            if (request.status !== 200) {
+                alert("Error occurred! \n" + request.responseText);
+            } else {
+                alert("Ok");
                 window.location.reload();
             }
-            request.send();
         }
 
         function changeAuthor(authorId, bookId) {
@@ -42,7 +38,13 @@
         }
 
         function attachOrUnfastenExistingAuthor(authorId, isAttaching) {
-            let params = "autorId=" + authorId + "&bookId=" + savedBookId + "&isAttaching = " + (isAttaching) ? 1 : 0;
+            let params = "authorId=" + authorId + "&bookId=" + savedBookId + "&isAttaching=";// + (isAttaching) ? "1" : "0";
+            if(isAttaching){
+                params += "1";
+            } else {
+                params += "0";
+            }
+
             sendRequest("POST", base_server_url + 'books/registerAuthor', params);
         }
 
@@ -61,7 +63,7 @@
             bookDescText.innerText = bookDesc;
             if (!isSaving)
                 return;
-            let params = "newDesc=" + document.getElementById("bookDescTextModal").value + "&bookId="+savedBookId + "&field=desc";
+            let params = "newDesc=" + document.getElementById("bookDescTextModal").value + "&bookId=" + savedBookId + "&field=desc";
             sendRequest("POST", base_server_url + "books/editBookTitle", params)
         }
 
@@ -72,10 +74,10 @@
         }
 
         function editBookPubDate(bookId) {
-            let bookDate = document.getElementById("book_pub_date"+bookId).value;
-            if(bookDate === "")
+            let bookDate = document.getElementById("book_pub_date" + bookId).value;
+            if (bookDate === "")
                 return;
-            let params = "newDate=" + bookDate + "&bookId="+bookId + "&field=date";
+            let params = "newDate=" + bookDate + "&bookId=" + bookId + "&field=date";
             sendRequest("POST", base_server_url + "books/editBookTitle", params)
         }
 
@@ -189,9 +191,13 @@
                             <div class="row">
                                 {% if book.publicationDate %}{{ book.publicationDate|date('Y-m-d') }}{% endif %}
                             </div>
-                                <div class="row">Enter date :</div>
-                                <div class="row"><input type="date" name="new_book_date" id="book_pub_date{{ book.id }}" ></div>
-                                <div class="row"><button class="btn btn-primary" onclick="editBookPubDate({{ book.id }})">Set new date</button> </div>
+                            <div class="row">Enter date :</div>
+                            <div class="row"><input type="date" name="new_book_date" id="book_pub_date{{ book.id }}">
+                            </div>
+                            <div class="row">
+                                <button class="btn btn-primary" onclick="editBookPubDate({{ book.id }})">Set new date
+                                </button>
+                            </div>
                         </div>
                     </td>
                     <td>
@@ -248,7 +254,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit book description</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
