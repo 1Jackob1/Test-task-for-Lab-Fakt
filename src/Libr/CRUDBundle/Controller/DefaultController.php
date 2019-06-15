@@ -2,9 +2,11 @@
 
 
 namespace Libr\CRUDBundle\Controller;
-require __DIR__.'/../../../../vendor/fzaninotto/faker/src/autoload.php';
+require __DIR__ . '/../../../../vendor/fzaninotto/faker/src/autoload.php';
 
-use Fakerino\Fakerino;
+use Doctrine\DBAL\Exception\InvalidArgumentException;
+use Doctrine\ORM\Persisters\PersisterException;
+use Exception;
 use Libr\CRUDBundle\Entity\Authors;
 use Libr\CRUDBundle\Entity\Books;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -29,12 +31,12 @@ class DefaultController extends Controller
      */
     public function generateFakeDataAction($recordCount)
     {
-        if($recordCount == 0){
+        if ($recordCount == 0) {
             return new Response('Nothing to create');
         }
         $faker = Factory::create();
         $em = $this->getDoctrine()->getManager();
-        $img_path = $this->get('kernel')->getRootDir().'/../web/uploaded_imgs';
+        $img_path = $this->get('kernel')->getRootDir() . '/../web/uploaded_imgs';
         for ($i = 0; $i < $recordCount; $i++) {
             /*
              * Generate Books
@@ -53,12 +55,20 @@ class DefaultController extends Controller
             $author = new Authors();
             $author->setFirstName($faker->firstName);
             $author->setSecondName($faker->lastName);
-
-            $em->persist($book);
-            $em->persist($author);
+            try {
+                $em->persist($book);
+                $em->persist($author);
+            } catch (Exception $e) {
+                return new Response('Error while persisting. <br> Message: ' . $e->getMessage());
+            }
 
         }
-        $em->flush();
+        try {
+            $em->flush();
+        } catch (Exception $e) {
+            return new Response('Error while flushing. <br> Message: ' . $e->getMessage());
+        }
+
         $books = $em->getRepository('LibrCRUDBundle:Books')->findAll();
         $authors = $em->getRepository('LibrCRUDBundle:Authors')->findAll();
         $authors_size = sizeof($authors);
@@ -70,7 +80,11 @@ class DefaultController extends Controller
             $book->addAuthor($authors[mt_rand(((int)($authors_size / 2)) + 1, $authors_size - 1)]);
 
         }
-        $em->flush();
+        try {
+            $em->flush();
+        } catch (Exception $e) {
+            return new Response('Error while flushing. <br> Message: ' . $e->getMessage());
+        }
         return new Response('Success');
     }
 }
