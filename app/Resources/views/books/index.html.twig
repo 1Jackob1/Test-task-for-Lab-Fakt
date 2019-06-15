@@ -17,7 +17,11 @@
                 alert("Error occurred! \n" + request.responseText);
             } else {
                 alert("Ok");
-                window.location.reload();
+                if (method === "GET") {
+                    window.location.replace(path);
+                } else {
+                    window.location.reload();
+                }
             }
         }
 
@@ -39,7 +43,7 @@
 
         function attachOrUnfastenExistingAuthor(authorId, isAttaching) {
             let params = "authorId=" + authorId + "&bookId=" + savedBookId + "&isAttaching=";// + (isAttaching) ? "1" : "0";
-            if(isAttaching){
+            if (isAttaching) {
                 params += "1";
             } else {
                 params += "0";
@@ -53,7 +57,7 @@
             if (newBookTitle == null || newBookTitle === '')
                 return;
             let params = "bookId=" + bookId + "&newTitle=" + newBookTitle + "&field=title";
-            sendRequest("POST", base_server_url + 'books/editBookTitle', params);
+            sendRequest("POST", base_server_url + 'books/editBookField', params);
         }
 
         function editBookDesc(isSaving) {
@@ -69,7 +73,6 @@
 
         function sortBooks(field, order) {
             let params = "field=" + field + "&order=" + order;
-            alert(params);
             sendRequest("GET", base_server_url + "books/sort?" + params);
         }
 
@@ -230,28 +233,11 @@
             </tbody>
         </table>
     </div>
-
-    <!--<div class=" w-100 row px-3">
-        <form class="row col-12 col-xl-6" enctype="multipart/form-data" action="{{ path('form_process') }}"
-              method="post">
-            <div class="col-6 col-lg-4 mb-3">Enter book title: <input type="text" name="book_title"></div>
-            <div class="col-6 offset-lg-4 col-lg-4 mb-3">Enter book published date : <input type="date"
-                                                                                            name="book_date"></div>
-            <div class="col-12 mb-3">Enter book description: <textarea class="w-100" name="book_desc"></textarea></div>
-            <input type="hidden" name="MAX_FILE_SIZE" value="150000">
-            <div class="custom-file col-6 mb-3">
-                <input type="file" class="custom-file-input" id="validatedCustomFile" name="book_img" required>
-                <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
-                <div class="invalid-feedback">Example invalid custom file feedback</div>
-            </div>
-            <input class="col-4 offset-2" type="submit" value="Add new book">
-        </form>
-
-    </div>-->
-    {{ form_start(new_book_form) }}
-    {{ form_widget(new_book_form) }}
-    {{ form_end(new_book_form) }}
-
+    {% if new_book_form is defined %}
+        {{ form_start(new_book_form) }}
+        {{ form_widget(new_book_form) }}
+        {{ form_end(new_book_form) }}
+    {% endif %}
     <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
          aria-hidden="true">
         <div class="modal-dialog" role="document">

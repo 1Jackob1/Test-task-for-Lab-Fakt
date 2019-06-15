@@ -46,14 +46,14 @@ class BooksController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $file */
             $file = $form["imgPath"]->getData();
-            $fileName = md5(uniqid()).'.'.$file->guessClientExtension();
+            $fileName = md5(uniqid()) . '.' . $file->guessClientExtension();
             try {
-                $file->move($this->get('kernel')->getRootDir()."/../web/uploaded_imgs", $fileName);
+                $file->move($this->get('kernel')->getRootDir() . "/../web/uploaded_imgs", $fileName);
 
             } catch (FileException $exception) {
                 return $this->errorProcessAction($exception);
             }
-            $book->setImgPath("/uploaded_imgs/".$fileName);
+            $book->setImgPath("/uploaded_imgs/" . $fileName);
             try {
                 $em->persist($book);
                 $em->flush();
@@ -62,52 +62,39 @@ class BooksController extends Controller
             }
         }
 
-        return $this->render('books/index.html.twig', array(
+        return $this->render('books/index.html.twig', [
             'books' => $em->getRepository('LibrCRUDBundle:Books')->findAll(),
             'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll(),
             'new_book_form' => $form->createView()
-        ));
+        ]);
     }
 
     /**
-     * @Route("/sort", name="sort_books_by")
+     * @Route("/sort", name="sort_books")
      * @Method("GET")
      */
     public function sortAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $books = $em->getRepository('LibrCRUDBundle:Books')->findBy(array(), array($request->query->get('field') => $request->query->get('order')));
+        $books = $em->getRepository('LibrCRUDBundle:Books')->findBy([], [$request->query->get('field') => $request->query->get('order')]);
         $authors = $em->getRepository('LibrCRUDBundle:Authors')->findAll();
-        return $this->render('books/index.html.twig', array(
+        return $this->render('books/index.html.twig', [
             'books' => $books,
             'authors' => $authors
-        ));
+        ]);
     }
 
-//    /**
-//     * Finds and displays a book entity.
-//     *
-//     * @Route("/{bookId}", name="books_show")
-//     * @Method("GET")
-//     */
-//    public function showAction(Books $book)
-//    {
-//        return $this->render('books/show.html.twig', array(
-//            'book' => $book,
-//        ));
-//    }
-
     /**
-     * @Route("/addAuthor", name="add_Book_Author")
+     * @Route("/addAuthor", name="add_book_author")
      * @Method("POST")
      */
     public function addAuthorAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $book = $em->getRepository('LibrCRUDBundle:Books')->find($request->request->get('bookId'));
+        $book = $em->getRepository('LibrCRUDBundle:Books')->find($request->get('bookId'));
         $author = new Authors();
-        $author->setFirstName($request->request->get('authorFirstName'));
-        $author->setSecondName($request->request->get('authorSecondName'));
+        $author->setFirstName($request->get('authorFirstName'));
+        $author->setSecondName($request->get('authorSecondName'));
         try {
             $em->persist($author);
             $book->addAuthor($author);
@@ -116,28 +103,9 @@ class BooksController extends Controller
             return $this->errorProcessAction($exception);
         }
 
-        return $this->redirectToRoute('books_index', array(), 302);
-
+        return $this->redirectToRoute('books_index', [], 302);
     }
 
-    /**
-     * @Route("/form", name="form_process")
-     * @Method("POST")
-     */
-    public function formProcess()
-    {
-        $book = new Books();
-        $book->setDescription($_POST['book_desc']);
-        $book->setImgPath('/uploaded_imgs/' . md5(time()) . basename($_FILES['book_img']['name']));
-        $book->setTitle($_POST['book_title']);
-        $book->setPublicationDate(new DateTime($_POST['book_date']));
-        move_uploaded_file($_FILES['book_img']['tmp_name'], '/home/jackob/Desktop/MaProj/Test-task-for-Lab-Fakt/CRUD_for_lib/web' . $book->getImgPath());
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($book);
-        $em->flush();
-
-        return $this->redirectToRoute('books_index', array(), 302);
-    }
 
     /**
      * @Route("/registerAuthor", name="attach_author")
@@ -169,15 +137,15 @@ class BooksController extends Controller
         } catch (Exception $exception) {
             return $this->errorProcessAction($exception);
         }
-        return $this->redirectToRoute('books_index', array(), 302);
+        return $this->redirectToRoute('books_index', [], 302);
     }
 
 
     /**
-     * @Route("/editBookTitle", name="edit_book_title")
+     * @Route("/editBookField", name="edit_book_field")
      * @Method("POST")
      */
-    public function editBookTitle(Request $request)
+    public function editBookField(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $book = $em->getRepository('LibrCRUDBundle:Books')->find($request->get('bookId'));
@@ -217,7 +185,7 @@ class BooksController extends Controller
             return $this->errorProcessAction($exception);
         }
 
-        return $this->redirectToRoute('books_index', array(), 302);
+        return $this->redirectToRoute('books_index', [], 302);
     }
 
     /**
@@ -235,24 +203,24 @@ class BooksController extends Controller
         $rsm->execute();
         $queryResult = $rsm->fetchAll();
         $booksRep = $em->getRepository('LibrCRUDBundle:Books');
-        $books = array();
-        foreach ($queryResult as $el)
+        $books = [];
+        foreach ($queryResult as $el) {
             $books[] = $booksRep->find($el['id']);
-        return $this->render(':books:index.html.twig', array(
+        }
+        return $this->render(':books:index.html.twig', [
             'books' => $books,
             'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
-        ));
-
+        ]);
     }
 
     /**
      * @Route("/query/doctrine", name="doctrine_query")
      * @Method("GET")
      */
-    public function doctineQueryAction()
+    public function doctrineQueryAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $qb = $this->getDoctrine()->getEntityManager()->createQueryBuilder();
+        $qb = $em->createQueryBuilder();
         $qb->select('b.id')
             ->from('LibrCRUDBundle:Books', 'b')
             ->join('b.author', 'author')
@@ -261,12 +229,13 @@ class BooksController extends Controller
         $queryResult = $qb->getQuery()->getResult();
         $booksRep = $em->getRepository('LibrCRUDBundle:Books');
         $books = array();
-        foreach ($queryResult as $el)
-            $books[] = $booksRep->find($el['bookId']);
-        return $this->render(':books:index.html.twig', array(
+        foreach ($queryResult as $el) {
+            $books[] = $booksRep->find($el['id']);
+        }
+        return $this->render(':books:index.html.twig', [
             'books' => $books,
             'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
-        ));
+        ]);
     }
 
     /**
@@ -275,7 +244,9 @@ class BooksController extends Controller
      */
     public function errorProcessAction(Exception $exception)
     {
-        $this->get('logger')->addError($exception->getMessage(), array($exception->getCode(), $exception->getFile(), $exception->getLine()));
+        $this->get('logger')->addError($exception->getMessage(), [$exception->getCode(), $exception->getFile(), $exception->getLine()]);
         return new Response($exception->getMessage(), 406);
     }
+
+
 }
