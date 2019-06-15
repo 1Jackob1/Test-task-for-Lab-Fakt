@@ -231,7 +231,7 @@
         </table>
     </div>
 
-    <div class=" w-100 row px-3">
+    <!--<div class=" w-100 row px-3">
         <form class="row col-12 col-xl-6" enctype="multipart/form-data" action="{{ path('form_process') }}"
               method="post">
             <div class="col-6 col-lg-4 mb-3">Enter book title: <input type="text" name="book_title"></div>
@@ -247,7 +247,10 @@
             <input class="col-4 offset-2" type="submit" value="Add new book">
         </form>
 
-    </div>
+    </div>-->
+    {{ form_start(new_book_form) }}
+    {{ form_widget(new_book_form) }}
+    {{ form_end(new_book_form) }}
 
     <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
          aria-hidden="true">

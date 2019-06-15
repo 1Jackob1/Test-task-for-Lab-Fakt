@@ -3,14 +3,20 @@
 namespace Libr\CRUDBundle\Controller;
 
 use DateTime;
+use Doctrine\DBAL\Types\DateType;
+use Doctrine\DBAL\Types\TextType;
 use Exception;
 use Libr\CRUDBundle\Entity\Authors;
 use Libr\CRUDBundle\Entity\Books;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Book controller.
@@ -23,15 +29,43 @@ class BooksController extends Controller
      * Lists all book entities.
      *
      * @Route("/", name="books_index")
-     * @Method("GET")
+     *
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $book = new Books();
+        $form = $this->createFormBuilder($book)
+            ->add('title', TextType::TEXT)
+            ->add('description', TextType::TEXT)
+            ->add('publicationDate', DateType::DATE)
+            ->add('imgPath', FileType::class)
+            ->add('Save_book.', SubmitType::class, ["label" => "Crate Book"])
+            ->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $file */
+            $file = $form["imgPath"]->getData();
+            $fileName = md5(uniqid()).'.'.$file->guessClientExtension();
+            try {
+                $file->move($this->get('kernel')->getRootDir()."/../web/uploaded_imgs", $fileName);
+
+            } catch (FileException $exception) {
+                return $this->errorProcessAction($exception);
+            }
+            $book->setImgPath("/uploaded_imgs/".$fileName);
+            try {
+                $em->persist($book);
+                $em->flush();
+            } catch (Exceptio $exception) {
+                return $this->errorProcessAction($exception);
+            }
+        }
 
         return $this->render('books/index.html.twig', array(
             'books' => $em->getRepository('LibrCRUDBundle:Books')->findAll(),
-            'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll()
+            'authors' => $em->getRepository('LibrCRUDBundle:Authors')->findAll(),
+            'new_book_form' => $form->createView()
         ));
     }
 
